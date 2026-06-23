@@ -28,7 +28,23 @@ export async function getPurchaseFormData() {
   return { suppliers, products };
 }
 
-export async function createPurchase(data: any) {
+interface PurchaseItemInput {
+  productId: string;
+  quantity: string;
+  purchasePrice: string;
+  gstAmount: string;
+}
+
+interface PurchaseInput {
+  invoiceNumber: string;
+  supplierId: string;
+  purchaseDate: string;
+  totalAmount: number;
+  gstAmount: number;
+  items: PurchaseItemInput[];
+}
+
+export async function createPurchase(data: PurchaseInput) {
   try {
     // We use a Prisma transaction to ensure the purchase is recorded AND inventory is updated atomically.
     const result = await prisma.$transaction(async (tx) => {
@@ -41,7 +57,7 @@ export async function createPurchase(data: any) {
           totalAmount: data.totalAmount,
           gstAmount: data.gstAmount,
           items: {
-            create: data.items.map((item: any) => ({
+            create: data.items.map((item: PurchaseItemInput) => ({
               productId: item.productId,
               quantity: parseInt(item.quantity),
               purchasePrice: parseFloat(item.purchasePrice),
@@ -69,9 +85,9 @@ export async function createPurchase(data: any) {
     revalidatePath("/dashboard/purchases");
     revalidatePath("/dashboard/products");
     return { success: true, purchase: result };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to create purchase:", error);
-    if (error.code === "P2002") {
+    if (typeof error === "object" && error !== null && "code" in error && (error as {code: string}).code === "P2002") {
       return { success: false, error: "A purchase with this Invoice Number already exists." };
     }
     return { success: false, error: "Failed to record purchase." };

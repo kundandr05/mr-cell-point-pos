@@ -26,7 +26,23 @@ export async function getProductFormData() {
   return { brands, categories, suppliers };
 }
 
-export async function createProduct(data: any) {
+interface ProductInput {
+  sku: string;
+  barcode?: string | null;
+  name: string;
+  brandId: string;
+  categoryId: string;
+  supplierId?: string | null;
+  hsnCode?: string | null;
+  gstPercentage: string;
+  purchasePrice: string;
+  sellingPrice: string;
+  stockQuantity: string;
+  reorderLevel: string;
+  warrantyPeriod?: string | null;
+}
+
+export async function createProduct(data: ProductInput) {
   try {
     const product = await prisma.product.create({
       data: {
@@ -48,9 +64,9 @@ export async function createProduct(data: any) {
     
     revalidatePath("/dashboard/products");
     return { success: true, product };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to create product:", error);
-    if (error.code === "P2002") {
+    if (typeof error === "object" && error !== null && "code" in error && (error as {code: string}).code === "P2002") {
       return { success: false, error: "A product with this SKU or Barcode already exists." };
     }
     return { success: false, error: "Failed to create product." };

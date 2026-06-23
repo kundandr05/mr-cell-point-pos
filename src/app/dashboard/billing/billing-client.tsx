@@ -28,7 +28,14 @@ export function BillingClient() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<{
+    id: string;
+    barcode: string | null;
+    sku: string;
+    name: string;
+    sellingPrice: number;
+    gstPercentage: number;
+  }[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -41,44 +48,9 @@ export function BillingClient() {
   useEffect(() => {
     searchInputRef.current?.focus();
   }, []);
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "F9") {
-        e.preventDefault();
-        handleCheckout();
-      }
-    };
 
-    window.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [cart, isPending]);
-
-  // Handle Search
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (searchQuery.trim().length > 1) {
-        const results = await searchProducts(searchQuery);
-        setSearchResults(results);
-
-        // Auto-add if exact barcode match
-        if (results.length === 1 && results[0].barcode === searchQuery) {
-          addToCart(results[0]);
-          setSearchQuery("");
-          setSearchResults([]);
-        }
-      } else {
-        setSearchResults([]);
-      }
-    };
-
-    const debounce = setTimeout(fetchResults, 300);
-    return () => clearTimeout(debounce);
-  }, [searchQuery]);
-
-  const addToCart = (product: any) => {
+  const addToCart = (product: { id: string; name: string; sku: string; sellingPrice: number; gstPercentage: number }) => {
     setCart((prev) => {
       const existing = prev.find(item => item.productId === product.id);
 
@@ -120,11 +92,33 @@ export function BillingClient() {
         }];
       }
     });
-
+    
     // Focus back on search for next scan
     searchInputRef.current?.focus();
     toast.success(`Added ${product.name} to cart`);
   };
+
+  // Handle Search
+  useEffect(() => {
+    const fetchResults = async () => {
+      if (searchQuery.trim().length > 1) {
+        const results = await searchProducts(searchQuery);
+        setSearchResults(results);
+
+        // Auto-add if exact barcode match
+        if (results.length === 1 && results[0].barcode === searchQuery) {
+          addToCart(results[0]);
+          setSearchQuery("");
+          setSearchResults([]);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    const debounce = setTimeout(fetchResults, 300);
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   const updateQuantity = (productId: string, delta: number) => {
     setCart((prev) => prev.map(item => {
@@ -158,7 +152,7 @@ export function BillingClient() {
 
   const handleCheckout = async () => {
     if (cart.length === 0) return toast.error("Cart is empty");
-
+    
     setIsPending(true);
     const result = await createInvoice({
       customerName,
@@ -173,7 +167,7 @@ export function BillingClient() {
       items: cart
     });
 
-    if (result.success) {
+    if (result.success && result.invoiceId) {
       toast.success("Invoice generated successfully!");
       router.push(`/dashboard/invoices/${result.invoiceId}`);
     } else {
@@ -181,6 +175,22 @@ export function BillingClient() {
       setIsPending(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F9") {
+        e.preventDefault();
+        handleCheckout();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart, isPending, customerName, customerPhone, paymentMode, discount, isInterState]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
@@ -334,7 +344,7 @@ export function BillingClient() {
 
             <div className="flex justify-between text-sm items-center pt-2">
               <span className="text-muted-foreground">Payment Mode</span>
-              <Select value={paymentMode} onValueChange={(v: any) => setPaymentMode(v)}>
+              <Select value={paymentMode} onValueChange={(v: "CASH" | "UPI" | "CARD" | "SPLIT" | null) => { if(v) setPaymentMode(v) }}>
                 <SelectTrigger className="w-32 h-8">
                   <SelectValue />
                 </SelectTrigger>

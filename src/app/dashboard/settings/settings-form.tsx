@@ -23,7 +23,15 @@ const settingsSchema = z.object({
 });
 
 type SettingsFormProps = {
-  initialData: any;
+  initialData: {
+    name: string;
+    gstin: string | null;
+    phoneNumber: string | null;
+    email: string | null;
+    address: string | null;
+    invoicePrefix: string;
+    invoiceFooter: string | null;
+  } | null;
 };
 
 export function SettingsForm({ initialData }: SettingsFormProps) {

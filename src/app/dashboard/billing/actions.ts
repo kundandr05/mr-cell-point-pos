@@ -24,7 +24,29 @@ export async function searchProducts(query: string) {
   });
 }
 
-export async function createInvoice(data: any) {
+interface InvoiceItemInput {
+  productId: string;
+  quantity: number;
+  rate: number;
+  gstPercent: number;
+  gstAmount: number;
+  totalAmount: number;
+}
+
+interface InvoiceInput {
+  customerName?: string;
+  customerPhone?: string;
+  paymentMode: "CASH" | "UPI" | "CARD" | "SPLIT";
+  subtotal: number;
+  cgst: number;
+  sgst: number;
+  igst: number;
+  grandTotal: number;
+  discount?: number;
+  items: InvoiceItemInput[];
+}
+
+export async function createInvoice(data: InvoiceInput) {
   try {
     const settings = await prisma.shopSettings.findFirst();
     const prefix = settings?.invoicePrefix || "INV-";
@@ -47,7 +69,7 @@ export async function createInvoice(data: any) {
           grandTotal: data.grandTotal,
           discount: data.discount || 0,
           items: {
-            create: data.items.map((item: any) => ({
+            create: data.items.map((item: InvoiceItemInput) => ({
               productId: item.productId,
               quantity: item.quantity,
               rate: item.rate,

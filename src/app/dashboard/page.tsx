@@ -5,7 +5,7 @@ export default function DashboardPage() {
       
       <div className="bento-grid">
         <div className="glass-card p-6 rounded-xl space-y-2">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase">Today's Sales</h3>
+          <h3 className="text-sm font-medium text-muted-foreground uppercase">Today&apos;s Sales</h3>
           <p className="text-3xl font-bold text-success">₹0</p>
         </div>
         <div className="glass-card p-6 rounded-xl space-y-2">
