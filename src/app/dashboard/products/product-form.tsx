@@ -118,7 +118,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Brand *</Label>
-                <Select onValueChange={(val) => setValue("brandId", val ?? "")}>
+                <Select onValueChange={(val) => setValue("brandId", String(val || ""))}>
                   <SelectTrigger className={errors.brandId ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select Brand" />
                   </SelectTrigger>
@@ -129,7 +129,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Category *</Label>
-                <Select onValueChange={(val) => setValue("categoryId", val ?? "")}>
+                <Select onValueChange={(val) => setValue("categoryId", String(val || ""))}>
                   <SelectTrigger className={errors.categoryId ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
@@ -152,7 +152,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="gstPercentage">GST %</Label>
-                <Select defaultValue="18" onValueChange={(val) => setValue("gstPercentage", val ?? "18")}>
+                <Select defaultValue="18" onValueChange={(val) => setValue("gstPercentage", String(val || "18"))}>
                   <SelectTrigger>
                     <SelectValue placeholder="GST %" />
                   </SelectTrigger>
@@ -183,7 +183,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Supplier</Label>
-                <Select onValueChange={(val) => setValue("supplierId", val ?? "")}>
+                <Select onValueChange={(val) => setValue("supplierId", String(val || ""))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Supplier" />
                   </SelectTrigger>
