@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/auth";
+
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export async function getPurchases() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   return await prisma.purchase.findMany({
     include: {
       supplier: true,
@@ -20,6 +25,9 @@ export async function getPurchases() {
 }
 
 export async function getPurchaseFormData() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   const [suppliers, products] = await Promise.all([
     prisma.supplier.findMany({ orderBy: { name: "asc" } }),
     prisma.product.findMany({ orderBy: { name: "asc" } }),
@@ -45,6 +53,9 @@ interface PurchaseInput {
 }
 
 export async function createPurchase(data: PurchaseInput) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     // We use a Prisma transaction to ensure the purchase is recorded AND inventory is updated atomically.
     const result = await prisma.$transaction(async (tx) => {
@@ -95,6 +106,9 @@ export async function createPurchase(data: PurchaseInput) {
 }
 
 export async function deletePurchase(id: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     // To safely delete a purchase, we need to decrement the inventory back.
     await prisma.$transaction(async (tx) => {

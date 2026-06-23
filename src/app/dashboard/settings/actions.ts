@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/auth";
+
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export async function getShopSettings() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   const settings = await prisma.shopSettings.findFirst();
   return settings;
 }
@@ -21,6 +26,9 @@ export type ShopSettingsInput = {
 };
 
 export async function updateShopSettings(data: ShopSettingsInput) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     const existingSettings = await prisma.shopSettings.findFirst();
     

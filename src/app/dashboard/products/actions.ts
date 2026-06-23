@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/auth";
+
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export async function getProducts() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   return await prisma.product.findMany({
     include: {
       brand: true,
@@ -17,6 +22,9 @@ export async function getProducts() {
 }
 
 export async function getProductFormData() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   const [brands, categories, suppliers] = await Promise.all([
     prisma.brand.findMany({ orderBy: { name: "asc" } }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
@@ -43,6 +51,9 @@ interface ProductInput {
 }
 
 export async function createProduct(data: ProductInput) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     const product = await prisma.product.create({
       data: {
@@ -74,6 +85,9 @@ export async function createProduct(data: ProductInput) {
 }
 
 export async function deleteProduct(id: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     await prisma.product.delete({
       where: { id },
@@ -86,6 +100,9 @@ export async function deleteProduct(id: string) {
 }
 
 export async function generateSkuAndBarcode() {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   // Generate a random 12 digit barcode
   const barcode = Math.floor(100000000000 + Math.random() * 900000000000).toString();
   // Generate a short SKU

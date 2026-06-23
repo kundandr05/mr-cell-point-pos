@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/auth";
+
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
 export async function searchProducts(query: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   if (!query) return [];
   
   return await prisma.product.findMany({
@@ -47,6 +52,9 @@ interface InvoiceInput {
 }
 
 export async function createInvoice(data: InvoiceInput) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
   try {
     const settings = await prisma.shopSettings.findFirst();
     const prefix = settings?.invoicePrefix || "INV-";
