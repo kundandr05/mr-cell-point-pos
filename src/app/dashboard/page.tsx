@@ -13,8 +13,16 @@ export default function DashboardPage() {
           <p className="text-3xl font-bold text-primary">₹0</p>
         </div>
         <div className="glass-card p-6 rounded-xl space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase">Yearly Sales</h3>
+          <p className="text-3xl font-bold text-primary">₹0</p>
+        </div>
+        <div className="glass-card p-6 rounded-xl space-y-2">
           <h3 className="text-sm font-medium text-muted-foreground uppercase">Inventory Value</h3>
           <p className="text-3xl font-bold text-warning">₹0</p>
+        </div>
+        <div className="glass-card p-6 rounded-xl space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground uppercase">Pending Payments</h3>
+          <p className="text-3xl font-bold text-destructive">₹0</p>
         </div>
       </div>
 

@@ -48,10 +48,8 @@ export function SupplierForm() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-          <Plus className="mr-2 h-4 w-4" /> Add Supplier
-        </Button>
+      <DialogTrigger render={<Button className="bg-primary text-primary-foreground hover:bg-primary/90" />}>
+        <Plus className="mr-2 h-4 w-4" /> Add Supplier
       </DialogTrigger>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
