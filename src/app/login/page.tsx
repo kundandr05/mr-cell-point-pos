@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { loginAction, loginWithGoogleAction } from "./actions";
+import { loginAction } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,22 +99,9 @@ export default function LoginPage() {
             <Button className="w-full" type="submit" disabled={isPending}>
               {isPending ? "Signing in..." : "Sign in"}
             </Button>
-            <div className="relative w-full">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
           </CardFooter>
         </form>
         <div className="px-6 pb-6 space-y-4 text-center">
-          <form action={loginWithGoogleAction}>
-            <Button variant="outline" type="submit" className="w-full">
-              Sign in with Google
-            </Button>
-          </form>
           <div className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <a href="/register" className="text-primary hover:underline font-medium">

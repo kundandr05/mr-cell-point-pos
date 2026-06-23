@@ -18,7 +18,3 @@ export async function loginAction(formData: FormData) {
     throw error;
   }
 }
-
-export async function loginWithGoogleAction() {
-  await signIn("google", { redirectTo: "/dashboard" });
-}
