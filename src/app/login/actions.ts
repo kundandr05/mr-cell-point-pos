@@ -10,9 +10,11 @@ export async function loginAction(formData: FormData) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case "CredentialsSignin":
-          return { error: "Invalid credentials." };
+          return { error: (error as any).type === "CredentialsSignin" && (error as any).cause?.err?.code ? (error as any).cause.err.code : "Invalid credentials." };
+        case "CallbackRouteError":
+          return { error: (error as any).cause?.err?.code || "Invalid credentials." };
         default:
-          return { error: "Something went wrong." };
+          return { error: (error as any).cause?.err?.code || "Something went wrong." };
       }
     }
     throw error;
