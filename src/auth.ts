@@ -56,6 +56,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
+        if (user.role === "STAFF" && !user.isApproved) {
+          throw new Error("Your account is pending admin approval.");
+        }
+
         return {
           id: user.id,
           email: user.email,

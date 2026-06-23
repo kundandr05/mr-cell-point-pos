@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { StaffForm } from "./staff-form";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteStaff } from "./actions";
+import { deleteStaff, approveStaff } from "./actions";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
@@ -21,6 +21,7 @@ export default async function StaffPage() {
       name: true,
       email: true,
       role: true,
+      isApproved: true,
       createdAt: true,
     }
   });
@@ -54,28 +55,47 @@ export default async function StaffPage() {
                     <td className="p-4 align-middle font-medium">{user.name || "N/A"}</td>
                     <td className="p-4 align-middle">{user.email}</td>
                     <td className="p-4 align-middle">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        user.role === "OWNER" 
-                          ? "bg-primary/10 text-primary" 
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {user.role}
-                      </span>
+                      <div className="flex gap-2 items-center">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          user.role === "OWNER" 
+                            ? "bg-primary/10 text-primary" 
+                            : "bg-muted text-muted-foreground"
+                        }`}>
+                          {user.role}
+                        </span>
+                        {!user.isApproved && (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-warning/20 text-warning-foreground border border-warning/50">
+                            Pending
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4 align-middle text-muted-foreground">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                     <td className="p-4 align-middle text-right">
-                      {session.user.id !== user.id && (
-                        <form action={async () => {
-                          "use server";
-                          await deleteStaff(user.id);
-                        }}>
-                          <Button variant="ghost" size="icon" type="submit" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </form>
-                      )}
+                      <div className="flex justify-end items-center gap-2">
+                        {!user.isApproved && session.user.id !== user.id && (
+                          <form action={async () => {
+                            "use server";
+                            await approveStaff(user.id);
+                          }}>
+                            <Button variant="outline" size="sm" type="submit" className="text-primary hover:text-primary">
+                              Approve
+                            </Button>
+                          </form>
+                        )}
+                        {session.user.id !== user.id && (
+                          <form action={async () => {
+                            "use server";
+                            await deleteStaff(user.id);
+                          }}>
+                            <Button variant="ghost" size="icon" type="submit" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </form>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
