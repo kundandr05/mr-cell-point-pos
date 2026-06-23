@@ -37,7 +37,7 @@ type PurchaseFormProps = {
 export function PurchaseForm({ suppliers, products }: PurchaseFormProps) {
   const [open, setOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  
+
   const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<z.infer<typeof purchaseSchema>>({
     resolver: zodResolver(purchaseSchema),
     defaultValues: {
@@ -75,7 +75,7 @@ export function PurchaseForm({ suppliers, products }: PurchaseFormProps) {
   const onSubmit = async (data: z.infer<typeof purchaseSchema>) => {
     setIsPending(true);
     const result = await createPurchase(data);
-    
+
     if (result.success) {
       toast.success("Purchase recorded successfully.");
       reset();
@@ -88,9 +88,14 @@ export function PurchaseForm({ suppliers, products }: PurchaseFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="bg-primary text-primary-foreground hover:bg-primary/90" />}>
-        <Plus className="mr-2 h-4 w-4" /> Record Purchase
-      </DialogTrigger>
+      <Button
+        type="button"
+        className="bg-primary text-primary-foreground hover:bg-primary/90"
+        onClick={() => setOpen(true)}
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        Record Purchase
+      </Button>
       <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Record Purchase Invoice</DialogTitle>
@@ -111,7 +116,7 @@ export function PurchaseForm({ suppliers, products }: PurchaseFormProps) {
               </div>
               <div className="grid gap-2">
                 <Label>Supplier *</Label>
-                <Select onValueChange={(val) => setValue("supplierId", val)}>
+                <Select onValueChange={(val) => setValue("supplierId", String(val || ""))}>
                   <SelectTrigger className={errors.supplierId ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select Supplier" />
                   </SelectTrigger>
@@ -129,19 +134,26 @@ export function PurchaseForm({ suppliers, products }: PurchaseFormProps) {
                   <Plus className="h-4 w-4 mr-2" /> Add Item
                 </Button>
               </div>
-              
+
               {errors.items?.message && <p className="text-xs text-destructive">{errors.items.message as string}</p>}
 
               {fields.map((field, index) => (
                 <div key={field.id} className="grid grid-cols-12 gap-2 items-end border-b pb-4">
                   <div className="col-span-12 md:col-span-4">
                     <Label className="text-xs">Product</Label>
-                    <Select 
+                    <Select
                       onValueChange={(val) => {
-                        setValue(`items.${index}.productId`, val);
-                        const prod = products.find(p => p.id === val);
+                        const productId = String(val || "");
+
+                        setValue(`items.${index}.productId`, productId);
+
+                        const prod = products.find((p) => p.id === productId);
+
                         if (prod) {
-                          setValue(`items.${index}.purchasePrice`, prod.purchasePrice.toString());
+                          setValue(
+                            `items.${index}.purchasePrice`,
+                            prod.purchasePrice.toString()
+                          );
                         }
                       }}
                     >
