@@ -26,7 +26,7 @@ type CartItem = {
 export function BillingClient() {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -41,6 +41,20 @@ export function BillingClient() {
   useEffect(() => {
     searchInputRef.current?.focus();
   }, []);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F9") {
+        e.preventDefault();
+        handleCheckout();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [cart, isPending]);
 
   // Handle Search
   useEffect(() => {
@@ -48,7 +62,7 @@ export function BillingClient() {
       if (searchQuery.trim().length > 1) {
         const results = await searchProducts(searchQuery);
         setSearchResults(results);
-        
+
         // Auto-add if exact barcode match
         if (results.length === 1 && results[0].barcode === searchQuery) {
           addToCart(results[0]);
@@ -59,7 +73,7 @@ export function BillingClient() {
         setSearchResults([]);
       }
     };
-    
+
     const debounce = setTimeout(fetchResults, 300);
     return () => clearTimeout(debounce);
   }, [searchQuery]);
@@ -67,7 +81,7 @@ export function BillingClient() {
   const addToCart = (product: any) => {
     setCart((prev) => {
       const existing = prev.find(item => item.productId === product.id);
-      
+
       if (existing) {
         // Increment qty
         return prev.map(item => {
@@ -77,7 +91,7 @@ export function BillingClient() {
             const baseRate = product.sellingPrice / (1 + (product.gstPercentage / 100));
             const totalBase = baseRate * qty;
             const totalGst = (product.sellingPrice * qty) - totalBase;
-            
+
             return {
               ...item,
               quantity: qty,
@@ -106,7 +120,7 @@ export function BillingClient() {
         }];
       }
     });
-    
+
     // Focus back on search for next scan
     searchInputRef.current?.focus();
     toast.success(`Added ${product.name} to cart`);
@@ -135,16 +149,16 @@ export function BillingClient() {
   // Calculations
   const subtotal = cart.reduce((acc, item) => acc + (item.rate * item.quantity), 0);
   const totalGst = cart.reduce((acc, item) => acc + item.gstAmount, 0);
-  
+
   const cgst = isInterState ? 0 : totalGst / 2;
   const sgst = isInterState ? 0 : totalGst / 2;
   const igst = isInterState ? totalGst : 0;
-  
+
   const grandTotal = Math.max(0, subtotal + totalGst - discount);
 
   const handleCheckout = async () => {
     if (cart.length === 0) return toast.error("Cart is empty");
-    
+
     setIsPending(true);
     const result = await createInvoice({
       customerName,
@@ -172,13 +186,13 @@ export function BillingClient() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
       {/* Left Panel: Search & Cart */}
       <div className="lg:col-span-2 flex flex-col space-y-4">
-        
+
         {/* Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-          <Input 
+          <Input
             ref={searchInputRef}
-            placeholder="Scan Barcode or Search by Name/SKU..." 
+            placeholder="Scan Barcode or Search by Name/SKU..."
             className="pl-10 h-12 text-lg shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -186,8 +200,8 @@ export function BillingClient() {
           {searchResults.length > 0 && searchQuery.length > 1 && (
             <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-y-auto">
               {searchResults.map(product => (
-                <div 
-                  key={product.id} 
+                <div
+                  key={product.id}
                   className="p-3 hover:bg-muted cursor-pointer flex justify-between border-b last:border-0"
                   onClick={() => {
                     addToCart(product);
@@ -307,14 +321,14 @@ export function BillingClient() {
                 <span>₹{igst.toFixed(2)}</span>
               </div>
             )}
-            
+
             <div className="flex justify-between text-sm items-center pt-2">
               <span className="text-muted-foreground">Discount (₹)</span>
-              <Input 
-                type="number" 
-                className="w-24 h-8 text-right" 
-                value={discount} 
-                onChange={e => setDiscount(parseFloat(e.target.value) || 0)} 
+              <Input
+                type="number"
+                className="w-24 h-8 text-right"
+                value={discount}
+                onChange={e => setDiscount(parseFloat(e.target.value) || 0)}
               />
             </div>
 
@@ -341,9 +355,9 @@ export function BillingClient() {
             </div>
           </CardContent>
           <CardFooter className="pt-0">
-            <Button 
-              className="w-full h-12 text-lg" 
-              size="lg" 
+            <Button
+              className="w-full h-12 text-lg"
+              size="lg"
               onClick={handleCheckout}
               disabled={cart.length === 0 || isPending}
             >
@@ -354,17 +368,6 @@ export function BillingClient() {
         </Card>
       </div>
 
-      {/* Global keybinds */}
-      {useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-          if (e.key === "F9") {
-            e.preventDefault();
-            handleCheckout();
-          }
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-      })}
     </div>
   );
 }
