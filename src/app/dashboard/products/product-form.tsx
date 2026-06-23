@@ -39,12 +39,12 @@ type ProductFormProps = {
 export function ProductForm({ brands, categories, suppliers }: ProductFormProps) {
   const [open, setOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
-  
+
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      name: "", sku: "", barcode: "", brandId: "", categoryId: "", supplierId: "", 
-      hsnCode: "", gstPercentage: "18", purchasePrice: "0", sellingPrice: "0", 
+      name: "", sku: "", barcode: "", brandId: "", categoryId: "", supplierId: "",
+      hsnCode: "", gstPercentage: "18", purchasePrice: "0", sellingPrice: "0",
       stockQuantity: "0", reorderLevel: "5", warrantyPeriod: ""
     }
   });
@@ -61,7 +61,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
   const onSubmit = async (data: z.infer<typeof productSchema>) => {
     setIsPending(true);
     const result = await createProduct(data);
-    
+
     if (result.success) {
       toast.success(`Product "${data.name}" created successfully.`);
       reset();
@@ -105,11 +105,11 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
             </div>
 
             {barcodeValue && (
-               <div className="flex justify-center border p-2 rounded-md bg-slate-50">
-                 <BarcodeDisplay value={barcodeValue} height={40} />
-               </div>
+              <div className="flex justify-center border p-2 rounded-md bg-slate-50">
+                <BarcodeDisplay value={barcodeValue} height={40} />
+              </div>
             )}
-            
+
             {/* Row 2 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="grid gap-2">
@@ -118,7 +118,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Brand *</Label>
-                <Select onValueChange={(val) => setValue("brandId", val)}>
+                <Select onValueChange={(val: string) => setValue("brandId", val)}>
                   <SelectTrigger className={errors.brandId ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select Brand" />
                   </SelectTrigger>
@@ -129,7 +129,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Category *</Label>
-                <Select onValueChange={(val) => setValue("categoryId", val)}>
+                <Select onValueChange={(val: string) => setValue("categoryId", val)}>
                   <SelectTrigger className={errors.categoryId ? "border-destructive" : ""}>
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
@@ -152,7 +152,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="gstPercentage">GST %</Label>
-                <Select defaultValue="18" onValueChange={(val) => setValue("gstPercentage", val)}>
+                <Select defaultValue="18" onValueChange={(val: string) => setValue("gstPercentage", val)}>
                   <SelectTrigger>
                     <SelectValue placeholder="GST %" />
                   </SelectTrigger>
@@ -183,7 +183,7 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Supplier</Label>
-                <Select onValueChange={(val) => setValue("supplierId", val)}>
+                <Select onValueChange={(val) => setValue("brandId", val as string)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Supplier" />
                   </SelectTrigger>
