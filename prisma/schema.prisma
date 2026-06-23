@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  role          Role      @default(STAFF)
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  OWNER
+  STAFF
+}
+
+model ShopSettings {
+  id             String  @id @default(cuid())
+  name           String
+  logoUrl        String?
+  gstin          String
+  address        String
+  phoneNumber    String
+  email          String
+  invoicePrefix  String
+  invoiceFooter  String?
+}
+
+model Supplier {
+  id            String     @id @default(cuid())
+  name          String
+  suppliedItem  String?
+  gstin         String?
+  contactPerson String?
+  phoneNumber   String?
+  address       String?
+  paymentTerms  String?
+  products      Product[]
+  purchases     Purchase[]
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  products Product[]
+}
+
+model Product {
+  id             String      @id @default(cuid())
+  sku            String      @unique
+  barcode        String?     @unique
+  name           String
+  brandId        String
+  categoryId     String
+  hsnCode        String?
+  gstPercentage  Float
+  purchasePrice  Float
+  sellingPrice   Float
+  stockQuantity  Int         @default(0)
+  reorderLevel   Int         @default(5)
+  warrantyPeriod String?
+  supplierId     String?
+  brand          Brand       @relation(fields: [brandId], references: [id])
+  category       Category    @relation(fields: [categoryId], references: [id])
+  supplier       Supplier?   @relation(fields: [supplierId], references: [id])
+  purchaseItems  PurchaseItem[]
+  invoiceItems   InvoiceItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Purchase {
+  id            String         @id @default(cuid())
+  invoiceNumber String         @unique
+  supplierId    String
+  purchaseDate  DateTime
+  totalAmount   Float
+  gstAmount     Float
+  supplier      Supplier       @relation(fields: [supplierId], references: [id])
+  items         PurchaseItem[]
+  createdAt     DateTime       @default(now())
+}
+
+model PurchaseItem {
+  id            String   @id @default(cuid())
+  purchaseId    String
+  productId     String
+  quantity      Int
+  purchasePrice Float
+  gstAmount     Float
+  purchase      Purchase @relation(fields: [purchaseId], references: [id])
+  product       Product  @relation(fields: [productId], references: [id])
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  customerName  String?
+  customerPhone String?
+  paymentMode   PaymentMode
+  subtotal      Float
+  cgst          Float
+  sgst          Float
+  igst          Float
+  grandTotal    Float
+  discount      Float         @default(0)
+  date          DateTime      @default(now())
+  items         InvoiceItem[]
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+  CARD
+  SPLIT
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  productId   String
+  quantity    Int
+  rate        Float
+  gstPercent  Float
+  gstAmount   Float
+  totalAmount Float
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+}

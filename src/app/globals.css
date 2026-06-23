@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive: var(--destructive);
+
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  /* Soft gray and white background */
+  --background: oklch(0.98 0.01 250); /* #f8fafc slate-50 */
+  --foreground: oklch(0.145 0 0);
+  
+  --card: oklch(1 0 0); /* white */
+  --card-foreground: oklch(0.145 0 0);
+  
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  
+  /* Primary: #2563EB */
+  --primary: #2563eb;
+  --primary-foreground: oklch(0.985 0 0); /* white */
+  
+  /* Secondary / Soft Grays */
+  --secondary: oklch(0.96 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  
+  /* Error/Destructive: #DC2626 */
+  --destructive: #dc2626;
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* Success: #16A34A */
+  --success: #16a34a;
+  --success-foreground: oklch(0.985 0 0);
+
+  /* Warning: #F59E0B */
+  --warning: #f59e0b;
+  --warning-foreground: oklch(0.985 0 0);
+  
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: #2563eb; /* Primary color for focus ring */
+  
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Glassmorphism Utility */
+@layer utilities {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+  
+  /* Bento Grid Utility */
+  .bento-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+}
