@@ -64,23 +64,3 @@ export async function deleteStaff(id: string) {
     return { success: false, error: "Failed to delete user." };
   }
 }
-
-export async function approveStaff(id: string) {
-  const session = await auth();
-  if (!session || session.user?.role !== "OWNER") {
-    return { success: false, error: "Unauthorized" };
-  }
-
-  try {
-    await prisma.user.update({
-      where: { id },
-      data: { isApproved: true },
-    });
-
-    revalidatePath("/dashboard/staff");
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to approve user:", error);
-    return { success: false, error: "Failed to approve user." };
-  }
-}

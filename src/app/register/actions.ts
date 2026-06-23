@@ -20,7 +20,6 @@ export async function registerAction(data: { name: string; email: string; passwo
     const isFirstUser = totalUsers === 0;
 
     const role = isFirstUser ? Role.OWNER : Role.STAFF;
-    const isApproved = isFirstUser ? true : false;
 
     const hashedPassword = data.password ? await bcrypt.hash(data.password, 10) : undefined;
 
@@ -30,14 +29,13 @@ export async function registerAction(data: { name: string; email: string; passwo
         email: data.email,
         password: hashedPassword,
         role: role,
-        isApproved: isApproved,
       },
     });
 
     if (isFirstUser) {
       return { success: true, message: "Admin account created successfully! You can now log in." };
     } else {
-      return { success: true, message: "Registration successful! Please wait for the admin to approve your account before logging in." };
+      return { success: true, message: "Registration successful! You can now log in." };
     }
   } catch (error) {
     console.error("Failed to register user:", error);

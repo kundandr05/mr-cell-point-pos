@@ -4,10 +4,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-class PendingApprovalError extends CredentialsSignin {
-  code = "Your account is pending admin approval.";
-}
-
 const prisma = new PrismaClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -53,10 +49,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isPasswordValid) {
           return null;
-        }
-
-        if (user.role === "STAFF" && !user.isApproved) {
-          throw new PendingApprovalError();
         }
 
         return {
