@@ -1,5 +1,6 @@
-import { TrendingUp, CreditCard, Wallet, PackageOpen, AlertCircle, BarChart3, Activity, ArrowRight } from "lucide-react";
+import { TrendingUp, CreditCard, Wallet, PackageOpen, AlertCircle, BarChart3, Activity, ArrowRight, PackageX, ListMinus, History } from "lucide-react";
 import Link from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function DashboardPage() {
   return (
@@ -80,8 +81,12 @@ export default function DashboardPage() {
               View All <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="flex-1 flex items-center justify-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.02]">
-            <p className="text-muted-foreground text-sm font-medium">Inventory looks healthy</p>
+          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
+            <EmptyState 
+              icon={PackageX} 
+              title="Inventory is Healthy" 
+              description="No items are currently running low on stock." 
+            />
           </div>
         </div>
         
@@ -90,8 +95,12 @@ export default function DashboardPage() {
           <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" /> Top Products
           </h3>
-          <div className="flex-1 flex items-center justify-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.02]">
-            <p className="text-muted-foreground text-sm font-medium">No sales data yet</p>
+          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
+            <EmptyState 
+              icon={ListMinus} 
+              title="No Sales Data" 
+              description="Generate a bill to start tracking your top products." 
+            />
           </div>
         </div>
         
@@ -100,8 +109,12 @@ export default function DashboardPage() {
           <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
             <Activity className="h-5 w-5 text-muted-foreground" /> Recent Activity
           </h3>
-          <div className="flex-1 flex items-center justify-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.02]">
-            <p className="text-muted-foreground text-sm font-medium">No recent activity</p>
+          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
+            <EmptyState 
+              icon={History} 
+              title="No Recent Activity" 
+              description="Your shop's recent activity will appear here." 
+            />
           </div>
         </div>
         
