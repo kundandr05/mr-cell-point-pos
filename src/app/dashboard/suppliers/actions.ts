@@ -34,7 +34,7 @@ export async function createSupplier(data: SupplierInput) {
     const supplier = await prisma.supplier.create({
       data,
     });
-    revalidatePath("/dashboard/suppliers");
+    revalidatePath("/dashboard", "layout");
     return { success: true, supplier };
   } catch (error) {
     return { success: false, error: "Failed to create supplier." };
@@ -49,7 +49,7 @@ export async function deleteSupplier(id: string) {
     await prisma.supplier.delete({
       where: { id },
     });
-    revalidatePath("/dashboard/suppliers");
+    revalidatePath("/dashboard", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete supplier." };

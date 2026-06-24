@@ -1,10 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import { InvoicePrintButton } from "@/components/invoice-print-button";
+import { InvoiceActions } from "@/components/invoice-actions";
 import { Logo } from "@/components/ui/logo";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
 
 const prisma = new PrismaClient();
 
@@ -39,14 +40,25 @@ export default async function InvoicePrintPage({ params }: { params: { id: strin
         <Link href="/dashboard/billing" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Billing
         </Link>
-        <InvoicePrintButton />
+        <InvoiceActions 
+          invoiceData={{
+            invoiceNumber: invoice.invoiceNumber,
+            customerPhone: invoice.customerPhone,
+            customerName: invoice.customerName,
+            grandTotal: invoice.grandTotal,
+            date: invoice.date,
+          }}
+        />
       </div>
 
       {/* Invoice Document - Styled for Paper/Thermal Print */}
-      <div className="bg-white text-black p-10 rounded-2xl shadow-2xl print:shadow-none print:p-0 print:rounded-none max-w-[800px] mx-auto">
+      <div className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] border border-[#D4A017]/20 print:shadow-none print:p-0 print:rounded-none max-w-[800px] mx-auto relative overflow-hidden">
         
+        {/* Decorative Gold Header Bar */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#D4A017] via-[#F3E5AB] to-[#D4A017] print:hidden"></div>
+
         {/* Header Section */}
-        <div className="flex justify-between items-start border-b-2 border-black/80 pb-6 mb-6">
+        <div className="flex justify-between items-start border-b-2 border-[#D4A017]/50 pb-6 mb-6 pt-4">
           <div className="flex items-center gap-4">
             <div className="print:hidden">
               <Logo size="xl" />
@@ -62,7 +74,7 @@ export default async function InvoicePrintPage({ params }: { params: { id: strin
             </div>
           </div>
           <div className="text-right">
-            <h2 className="text-2xl font-bold uppercase tracking-widest text-black/40">Tax Invoice</h2>
+            <h2 className="text-2xl font-black uppercase tracking-widest text-[#D4A017]">Tax Invoice</h2>
             <p className="text-sm font-semibold mt-2">GSTIN: {settings?.gstin}</p>
           </div>
         </div>
@@ -117,15 +129,30 @@ export default async function InvoicePrintPage({ params }: { params: { id: strin
 
         {/* Summary Section */}
         <div className="flex justify-between items-start">
-          <div className="w-1/2 pr-8 text-sm text-black/70">
-            <p className="font-bold text-black mb-2 uppercase text-xs tracking-wider">Terms & Conditions</p>
-            <p>1. Goods once sold will not be taken back.</p>
-            <p>2. Warranty as per company policy.</p>
-            <p>3. Subject to local jurisdiction.</p>
+          <div className="w-1/2 pr-8 text-sm text-black/70 flex flex-col justify-between">
+            <div>
+              <p className="font-bold text-[#D4A017] mb-2 uppercase text-xs tracking-wider">Terms & Conditions</p>
+              <p>1. Goods once sold will not be taken back.</p>
+              <p>2. Warranty as per company policy.</p>
+              <p>3. Subject to local jurisdiction.</p>
+            </div>
+            
+            {/* QR Code for UPI Payment */}
+            {invoice.paymentMode === "UPI" && (
+              <div className="mt-6 flex flex-col items-start">
+                <p className="font-bold text-black mb-2 uppercase text-xs tracking-wider">Scan & Pay</p>
+                <div className="p-2 border-2 border-black rounded-lg">
+                  <QRCodeSVG 
+                    value={`upi://pay?pa=paytmqr123456@paytm&pn=MR%20Cell%20Point&am=${invoice.grandTotal.toFixed(2)}&cu=INR`} 
+                    size={100} 
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="w-1/2">
-            <div className="space-y-2 text-sm border-b border-black/20 pb-4 mb-4">
+            <div className="space-y-2 text-sm border-b border-[#D4A017]/30 pb-4 mb-4">
               <div className="flex justify-between">
                 <span className="font-semibold text-black/60">Subtotal</span>
                 <span className="font-bold">₹{invoice.subtotal.toFixed(2)}</span>
@@ -156,8 +183,8 @@ export default async function InvoicePrintPage({ params }: { params: { id: strin
               )}
             </div>
             
-            <div className="flex justify-between items-center bg-black/5 p-4 rounded-lg">
-              <span className="text-lg font-black uppercase tracking-wider">Grand Total</span>
+            <div className="flex justify-between items-center bg-[#D4A017]/10 border border-[#D4A017]/30 p-4 rounded-lg">
+              <span className="text-lg font-black uppercase tracking-wider text-[#D4A017]">Grand Total</span>
               <span className="text-2xl font-black">₹{invoice.grandTotal.toFixed(2)}</span>
             </div>
           </div>

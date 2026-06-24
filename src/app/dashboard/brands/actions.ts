@@ -24,7 +24,7 @@ export async function createBrand(name: string) {
     const brand = await prisma.brand.create({
       data: { name },
     });
-    revalidatePath("/dashboard/brands");
+    revalidatePath("/dashboard", "layout");
     return { success: true, brand };
   } catch (error) {
     return { success: false, error: "Failed to create brand. Name might already exist." };
@@ -39,7 +39,7 @@ export async function deleteBrand(id: string) {
     await prisma.brand.delete({
       where: { id },
     });
-    revalidatePath("/dashboard/brands");
+    revalidatePath("/dashboard", "layout");
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete brand." };
