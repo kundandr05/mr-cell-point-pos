@@ -19,6 +19,8 @@ export async function searchProducts(query: string) {
         { barcode: { equals: query } },
         { sku: { contains: query, mode: 'insensitive' } },
         { name: { contains: query, mode: 'insensitive' } },
+        { brand: { name: { contains: query, mode: 'insensitive' } } },
+        { category: { name: { contains: query, mode: 'insensitive' } } },
       ]
     },
     take: 10,
