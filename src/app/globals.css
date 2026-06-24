@@ -112,11 +112,7 @@
   .glass-card:hover {
     @apply border-primary/30 shadow-[0_0_15px_rgba(212,160,23,0.15)];
   }
-  
-  /* Bento Grid Utility */
-  .bento-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
-  }
+
   
   /* Safe area padding for mobile notches */
   .pb-safe {
