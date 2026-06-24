@@ -20,6 +20,7 @@ type CartItem = {
   gstPercent: number;
   gstAmount: number;
   totalAmount: number;
+  stockQuantity: number;
 };
 
 type Customer = {
@@ -60,6 +61,7 @@ export function BillingClient() {
   const [paymentMode, setPaymentMode] = useState<"CASH" | "UPI" | "CARD" | "SPLIT">("UPI");
   const [discount, setDiscount] = useState<number>(0);
   const [isPending, setIsPending] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Auto-focus search on load
   useEffect(() => {
@@ -70,17 +72,26 @@ export function BillingClient() {
   useEffect(() => {
     const fetchResults = async () => {
       if (searchQuery.trim().length > 1) {
-        const results = await searchProducts(searchQuery);
-        setSearchResults(results as any);
+        setIsSearching(true);
+        try {
+          const results = await searchProducts(searchQuery);
+          setSearchResults(results as any);
 
-        // Auto-add if exact barcode match
-        if (results.length === 1 && results[0].barcode === searchQuery) {
-          addToCart(results[0] as any);
-          setSearchQuery("");
+          // Auto-add if exact barcode match
+          if (results.length === 1 && results[0].barcode === searchQuery) {
+            addToCart(results[0] as any);
+            setSearchQuery("");
+            setSearchResults([]);
+          }
+        } catch (error) {
+          console.error("Search failed:", error);
           setSearchResults([]);
+        } finally {
+          setIsSearching(false);
         }
       } else {
         setSearchResults([]);
+        setIsSearching(false);
       }
     };
 
@@ -109,11 +120,21 @@ export function BillingClient() {
     setCustomerResults([]);
   };
 
-  const addToCart = (product: { id: string; name: string; sku: string; sellingPrice: number; gstPercentage: number }) => {
+  const addToCart = (product: { id: string; name: string; sku: string; sellingPrice: number; gstPercentage: number; stockQuantity: number }) => {
+    if (product.stockQuantity <= 0) {
+      toast.error(`Out of stock: ${product.name}`);
+      return;
+    }
+
     setCart((prev) => {
       const existing = prev.find(item => item.productId === product.id);
 
       if (existing) {
+        if (existing.quantity >= product.stockQuantity) {
+          toast.error(`Cannot add more. Only ${product.stockQuantity} in stock.`);
+          return prev;
+        }
+
         return prev.map(item => {
           if (item.productId === product.id) {
             const qty = item.quantity + 1;
@@ -144,7 +165,8 @@ export function BillingClient() {
           quantity: qty,
           gstPercent: product.gstPercentage,
           gstAmount: totalGst,
-          totalAmount: product.sellingPrice * qty
+          totalAmount: product.sellingPrice * qty,
+          stockQuantity: product.stockQuantity
         }];
       }
     });
@@ -157,6 +179,11 @@ export function BillingClient() {
     setCart((prev) => prev.map(item => {
       if (item.productId === productId) {
         const newQty = Math.max(1, item.quantity + delta);
+        if (newQty > item.stockQuantity) {
+          toast.error(`Cannot add more. Only ${item.stockQuantity} in stock.`);
+          return item;
+        }
+
         const singleTotalAmount = item.totalAmount / item.quantity;
         const newTotalAmount = singleTotalAmount * newQty;
         const singleBaseRate = item.rate;
@@ -232,33 +259,46 @@ export function BillingClient() {
 
             {/* Search Dropdown */}
             <AnimatePresence>
-              {searchResults.length > 0 && (
+              {searchQuery.trim().length > 1 && (
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute left-0 right-0 top-full mt-2 z-50 bg-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-[300px] overflow-y-auto"
                 >
-                  {searchResults.map((product) => (
-                    <div 
-                      key={product.id}
-                      onClick={() => {
-                        addToCart(product);
-                        setSearchQuery("");
-                        setSearchResults([]);
-                      }}
-                      className="p-4 border-b border-white/5 hover:bg-white/5 cursor-pointer flex justify-between items-center transition-colors"
-                    >
-                      <div>
-                        <p className="font-semibold text-foreground">{product.name}</p>
-                        <p className="text-xs text-muted-foreground">SKU: {product.sku} | Stock: {product.stockQuantity}</p>
+                  {isSearching ? (
+                    <div className="p-4 text-center text-muted-foreground text-sm">Searching...</div>
+                  ) : searchResults.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground text-sm">No products found</div>
+                  ) : (
+                    searchResults.map((product) => (
+                      <div 
+                        key={product.id}
+                        onClick={() => {
+                          addToCart(product);
+                          setSearchQuery("");
+                          setSearchResults([]);
+                        }}
+                        className={`p-4 border-b border-white/5 cursor-pointer flex justify-between items-center transition-colors ${
+                          product.stockQuantity > 0 ? "hover:bg-white/5" : "opacity-50 cursor-not-allowed bg-red-500/5"
+                        }`}
+                      >
+                        <div>
+                          <p className="font-semibold text-foreground flex items-center gap-2">
+                            {product.name}
+                            {product.stockQuantity <= 0 && (
+                              <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Out of Stock</span>
+                            )}
+                          </p>
+                          <p className="text-xs text-muted-foreground">SKU: {product.sku} | Stock: {product.stockQuantity}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-primary">₹{product.sellingPrice}</p>
+                          <p className="text-xs text-muted-foreground">Inc. GST</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-primary">₹{product.sellingPrice}</p>
-                        <p className="text-xs text-muted-foreground">Inc. GST</p>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
