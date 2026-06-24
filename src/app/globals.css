@@ -46,45 +46,47 @@
 }
 
 :root {
-  /* Soft gray and white background */
-  --background: oklch(0.98 0.01 250); /* #f8fafc slate-50 */
-  --foreground: oklch(0.145 0 0);
+  /* Deep Premium Black background */
+  --background: #111111; 
+  --foreground: #E5E5E5; /* Silver text */
   
-  --card: oklch(1 0 0); /* white */
-  --card-foreground: oklch(0.145 0 0);
+  /* Slightly lighter black for cards */
+  --card: #1A1A1A; 
+  --card-foreground: #E5E5E5;
   
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: #1A1A1A;
+  --popover-foreground: #E5E5E5;
   
-  /* Primary: #2563EB */
-  --primary: #2563eb;
-  --primary-foreground: oklch(0.985 0 0); /* white */
+  /* Primary: Metallic Gold (#D4A017) */
+  --primary: #D4A017;
+  --primary-foreground: #111111; /* Black text on gold buttons */
   
   /* Secondary / Soft Grays */
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary: #2A2A2A;
+  --secondary-foreground: #E5E5E5;
   
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted: #222222;
+  --muted-foreground: #A1A1AA; /* Zinc-400 equivalent for softer text */
   
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: #2A2A2A;
+  --accent-foreground: #D4A017; /* Gold accent text */
   
   /* Error/Destructive: #DC2626 */
   --destructive: #dc2626;
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive-foreground: #E5E5E5;
 
   /* Success: #16A34A */
   --success: #16a34a;
-  --success-foreground: oklch(0.985 0 0);
+  --success-foreground: #E5E5E5;
 
   /* Warning: #F59E0B */
   --warning: #f59e0b;
-  --warning-foreground: oklch(0.985 0 0);
+  --warning-foreground: #E5E5E5;
   
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: #2563eb; /* Primary color for focus ring */
+  /* Borders and Inputs: Dark silver/gray */
+  --border: #333333;
+  --input: #333333;
+  --ring: #D4A017; /* Gold focus ring */
   
   --radius: 0.75rem;
 }
@@ -104,7 +106,7 @@
 /* Glassmorphism Utility */
 @layer utilities {
   .glass-card {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+    @apply bg-black/50 backdrop-blur-md border border-white/10 shadow-lg;
   }
   
   /* Bento Grid Utility */
