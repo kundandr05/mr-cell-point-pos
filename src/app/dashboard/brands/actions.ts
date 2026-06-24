@@ -25,6 +25,7 @@ export async function createBrand(name: string) {
       data: { name },
     });
     revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/products");
     return { success: true, brand };
   } catch (error) {
     return { success: false, error: "Failed to create brand. Name might already exist." };

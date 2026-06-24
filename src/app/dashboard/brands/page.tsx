@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BrandForm } from "./brand-form";
 import { DeleteBrandButton } from "./delete-brand-button";
 
+export const dynamic = 'force-dynamic'
+
 export default async function BrandsPage() {
   const brands = await getBrands();
 

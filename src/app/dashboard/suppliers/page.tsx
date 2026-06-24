@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { SupplierForm } from "./supplier-form";
 import { DeleteSupplierButton } from "./delete-supplier-button";
 
+export const dynamic = 'force-dynamic';
+
 export default async function SuppliersPage() {
   const suppliers = await getSuppliers();
 

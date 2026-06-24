@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CategoryForm } from "./category-form";
 import { DeleteCategoryButton } from "./delete-category-button";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CategoriesPage() {
   const categories = await getCategories();
 

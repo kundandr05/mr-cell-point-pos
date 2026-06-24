@@ -25,6 +25,7 @@ export async function createCategory(name: string) {
       data: { name },
     });
     revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/products");
     return { success: true, category };
   } catch (error) {
     return { success: false, error: "Failed to create category. Name might already exist." };
