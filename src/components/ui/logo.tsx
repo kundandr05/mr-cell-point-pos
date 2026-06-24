@@ -19,13 +19,11 @@ export function Logo({ className, size = "md", withText = false }: LogoProps) {
     <div className={cn("flex items-center gap-3", className)}>
       <div
         className={cn(
-          "bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-[0_0_15px_rgba(212,160,23,0.15)]",
+          "rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(212,160,23,0.3)] overflow-hidden bg-black",
           sizeClasses[size]
         )}
       >
-        <span className="font-black text-transparent bg-clip-text bg-gradient-to-br from-[#D4A017] to-[#F3E5AB]">
-          M
-        </span>
+        <img src="/logo.jpg" alt="MR Cell Point Logo" className="w-full h-full object-cover" />
       </div>
       {withText && (
         <span className="font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">

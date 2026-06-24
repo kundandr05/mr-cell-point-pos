@@ -53,7 +53,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Invoice Document - Styled for Paper/Thermal Print */}
-      <div className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] border border-[#D4A017]/20 print:shadow-none print:p-0 print:rounded-none max-w-[800px] mx-auto relative overflow-hidden">
+      <div id="invoice-print-area" className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] border border-[#D4A017]/20 print:shadow-none print:p-0 print:rounded-none max-w-[800px] mx-auto relative overflow-hidden">
         
         {/* Decorative Gold Header Bar */}
         <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#D4A017] via-[#F3E5AB] to-[#D4A017] print:hidden"></div>
@@ -61,12 +61,8 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         {/* Header Section */}
         <div className="flex justify-between items-start border-b-2 border-[#D4A017]/50 pb-6 mb-6 pt-4">
           <div className="flex items-center gap-4">
-            <div className="print:hidden">
+            <div>
               <Logo size="xl" />
-            </div>
-            {/* Fallback for print since gradients might not print well */}
-            <div className="hidden print:flex items-center justify-center w-16 h-16 border-2 border-black rounded-full text-3xl font-black">
-              M
             </div>
             <div>
               <h1 className="text-3xl font-black uppercase tracking-tight">{settings?.name || "M R Cell Point"}</h1>

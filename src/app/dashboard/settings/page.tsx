@@ -1,28 +1,24 @@
-import { getShopSettings } from "./actions";
-import { SettingsForm } from "./settings-form";
-import { SecuritySettingsForm } from "./security-form";
+import { PrismaClient } from "@prisma/client";
+import { SettingsClient } from "./settings-client";
+
+const prisma = new PrismaClient();
 
 export default async function SettingsPage() {
-  const settings = await getShopSettings();
+  const shop = await prisma.shopSettings.findFirst();
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Shop Settings</h2>
-        <p className="text-muted-foreground">Manage your store details and invoice configuration.</p>
-      </div>
+    <div className="p-8 h-full overflow-y-auto">
+      <div className="max-w-2xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 mb-2">
+            Shop Settings
+          </h1>
+          <p className="text-muted-foreground">
+            Manage your MR Cell Point shop information. This data will be used on all invoices and reports.
+          </p>
+        </div>
 
-      <div className="glass-card rounded-xl p-6">
-        <SettingsForm initialData={settings} />
-      </div>
-
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight mt-10">Security Settings</h2>
-        <p className="text-muted-foreground">Update your master admin email and password.</p>
-      </div>
-
-      <div className="glass-card rounded-xl p-6">
-        <SecuritySettingsForm />
+        <SettingsClient initialData={shop} />
       </div>
     </div>
   );

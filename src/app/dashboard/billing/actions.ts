@@ -81,7 +81,7 @@ export async function createInvoice(data: InvoiceInput) {
     const result = await prisma.$transaction(async (tx) => {
       // Get next invoice number
       const count = await tx.invoice.count();
-      const invoiceNumber = `${prefix}${(count + 1).toString().padStart(4, '0')}`;
+      const invoiceNumber = `${prefix}${(count + 1).toString().padStart(6, '0')}`;
       
       // Handle customer auto-creation or linking
       let customerId = null;
