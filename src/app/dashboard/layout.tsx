@@ -3,6 +3,7 @@ import Link from "next/link";
 import { auth, signOut } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { MobileNav } from "@/components/mobile-nav";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -12,9 +13,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <div className="flex h-screen w-full bg-muted/20">
-      {/* Sidebar */}
-      <aside className="w-64 border-r bg-card glass-card flex flex-col">
+    <div className="flex h-screen w-full bg-background overflow-hidden">
+      {/* Desktop Sidebar (Hidden on Mobile) */}
+      <aside className="hidden md:flex w-64 border-r bg-card glass-card flex-col z-10">
         <div className="h-16 flex items-center px-6 border-b">
           <span className="font-bold text-lg text-primary">M R Cell Point</span>
         </div>
@@ -90,14 +91,17 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-16 border-b bg-card glass-card flex items-center px-6 justify-between shrink-0">
-          <h1 className="text-xl font-semibold">Inventory & Billing System</h1>
+      <main className="flex-1 flex flex-col overflow-hidden relative z-0">
+        <header className="h-16 border-b bg-card glass-card flex items-center px-4 md:px-6 justify-between shrink-0">
+          <h1 className="text-xl font-semibold">M R Cell Point</h1>
         </header>
-        <div className="flex-1 overflow-y-auto p-6">
+        {/* pb-20 on mobile ensures content isn't hidden behind the bottom nav */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
           {children}
         </div>
       </main>
+
+      <MobileNav />
     </div>
   );
 }

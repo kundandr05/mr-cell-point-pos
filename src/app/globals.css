@@ -113,4 +113,9 @@
   .bento-grid {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
   }
+  
+  /* Safe area padding for mobile notches */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
