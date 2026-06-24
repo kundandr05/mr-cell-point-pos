@@ -7,11 +7,20 @@ import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
-export async function getProducts() {
+export async function getProducts(query?: string) {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");
 
+  const whereClause = query ? {
+    OR: [
+      { name: { contains: query, mode: "insensitive" as const } },
+      { sku: { contains: query, mode: "insensitive" as const } },
+      { barcode: { contains: query, mode: "insensitive" as const } },
+    ]
+  } : {};
+
   return await prisma.product.findMany({
+    where: whereClause,
     include: {
       brand: true,
       category: true,

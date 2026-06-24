@@ -5,23 +5,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from "lucide-react";
+import { ProductSearch } from "./product-search";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }: { searchParams: { q?: string } }) {
+  const query = searchParams.q || "";
+
   const [products, formData] = await Promise.all([
-    getProducts(),
+    getProducts(query),
     getProductFormData(),
   ]);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-          <p className="text-muted-foreground">Manage your inventory products and stock.</p>
+          <p className="text-muted-foreground">Manage your product inventory, pricing, and stock.</p>
         </div>
-        <ProductForm brands={formData.brands} categories={formData.categories} suppliers={formData.suppliers} />
+        <div className="flex items-center gap-4">
+          <ProductSearch />
+          <ProductForm brands={formData.brands} categories={formData.categories} suppliers={formData.suppliers} />
+        </div>
       </div>
 
       <Card className="glass-card">
@@ -46,7 +52,7 @@ export default async function ProductsPage() {
               {products.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center text-muted-foreground h-24">
-                    No products found. Add a product to get started.
+                    {query ? `No products found matching "${query}"` : "No products found. Add a product to get started."}
                   </TableCell>
                 </TableRow>
               ) : (

@@ -1,9 +1,8 @@
 import { getBrands } from "./actions";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BrandForm } from "./brand-form";
-import { DeleteBrandButton } from "./delete-brand-button";
+import { BrandList } from "./brand-list";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const dynamic = 'force-dynamic'
 
@@ -26,32 +25,7 @@ export default async function BrandsPage() {
           <CardDescription>A list of all brands currently added to your inventory.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Brand Name</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {brands.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={2} className="text-center text-muted-foreground h-24">
-                    No brands found. Add one to get started.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                brands.map((brand) => (
-                  <TableRow key={brand.id}>
-                    <TableCell className="font-medium">{brand.name}</TableCell>
-                    <TableCell className="text-right">
-                      <DeleteBrandButton id={brand.id} name={brand.name} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <BrandList initialBrands={brands} />
         </CardContent>
       </Card>
     </div>

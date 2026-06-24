@@ -1,7 +1,7 @@
 import { getCategories } from "./actions";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CategoryForm } from "./category-form";
+import { CategoryList } from "./category-list";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeleteCategoryButton } from "./delete-category-button";
 
 export const dynamic = 'force-dynamic';
@@ -22,35 +22,10 @@ export default async function CategoriesPage() {
       <Card className="glass-card">
         <CardHeader>
           <CardTitle>All Categories</CardTitle>
-          <CardDescription>A list of all categories currently added to your inventory.</CardDescription>
+          <CardDescription>A list of all product categories in your inventory.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Category Name</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={2} className="text-center text-muted-foreground h-24">
-                    No categories found. Add one to get started.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                categories.map((category) => (
-                  <TableRow key={category.id}>
-                    <TableCell className="font-medium">{category.name}</TableCell>
-                    <TableCell className="text-right">
-                      <DeleteCategoryButton id={category.id} name={category.name} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <CategoryList initialCategories={categories} />
         </CardContent>
       </Card>
     </div>

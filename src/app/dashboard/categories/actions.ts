@@ -32,6 +32,23 @@ export async function createCategory(name: string) {
   }
 }
 
+export async function toggleCategoryStatus(id: string, isActive: boolean) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  try {
+    const category = await prisma.category.update({
+      where: { id },
+      data: { isActive }
+    });
+    revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/products");
+    return { success: true, category };
+  } catch (error) {
+    return { success: false, error: "Failed to update category status." };
+  }
+}
+
 export async function deleteCategory(id: string) {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");

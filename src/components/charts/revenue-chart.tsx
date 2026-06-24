@@ -53,7 +53,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
               boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
             }}
             itemStyle={{ color: '#D4A017', fontWeight: 'bold' }}
-            formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+            formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, 'Revenue']}
           />
           <Area
             type="monotone"

@@ -42,7 +42,7 @@ export function CategoryChart({ data }: CategoryChartProps) {
               boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
             }}
             itemStyle={{ color: '#fff', fontWeight: 'bold' }}
-            formatter={(value: number) => [`${value} Items`, 'Stock']}
+            formatter={(value: any) => [`${value} Items`, 'Stock']}
           />
           <Legend 
             verticalAlign="bottom" 
