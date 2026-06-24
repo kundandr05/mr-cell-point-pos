@@ -1,5 +1,6 @@
 import { getShopSettings } from "./actions";
 import { SettingsForm } from "./settings-form";
+import { SecuritySettingsForm } from "./security-form";
 
 export default async function SettingsPage() {
   const settings = await getShopSettings();
@@ -13,6 +14,15 @@ export default async function SettingsPage() {
 
       <div className="glass-card rounded-xl p-6">
         <SettingsForm initialData={settings} />
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight mt-10">Security Settings</h2>
+        <p className="text-muted-foreground">Update your master admin email and password.</p>
+      </div>
+
+      <div className="glass-card rounded-xl p-6">
+        <SecuritySettingsForm />
       </div>
     </div>
   );

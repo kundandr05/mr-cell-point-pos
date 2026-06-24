@@ -17,9 +17,10 @@ export async function registerAction(data: { name: string; email: string; passwo
 
     // Determine role and approval status based on total user count
     const totalUsers = await prisma.user.count();
-    const isFirstUser = totalUsers === 0;
 
-    const role = isFirstUser ? Role.OWNER : Role.STAFF;
+    if (totalUsers > 0) {
+      return { success: false, error: "An admin account already exists. Only one account is permitted." };
+    }
 
     const hashedPassword = data.password ? await bcrypt.hash(data.password, 10) : undefined;
 
@@ -28,15 +29,11 @@ export async function registerAction(data: { name: string; email: string; passwo
         name: data.name,
         email: data.email,
         password: hashedPassword,
-        role: role,
+        role: Role.OWNER,
       },
     });
 
-    if (isFirstUser) {
-      return { success: true, message: "Admin account created successfully! You can now log in." };
-    } else {
-      return { success: true, message: "Registration successful! You can now log in." };
-    }
+    return { success: true, message: "Admin account created successfully! You can now log in." };
   } catch (error) {
     console.error("Failed to register user:", error);
     return { success: false, error: "Failed to create user. Please try again." };

@@ -67,11 +67,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <Link href="/dashboard/settings" className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground">
             Shop Settings
           </Link>
-          {session.user?.role === "OWNER" && (
-            <Link href="/dashboard/staff" className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground text-primary">
-              Staff Management
-            </Link>
-          )}
         </nav>
         
         <div className="p-4 border-t">

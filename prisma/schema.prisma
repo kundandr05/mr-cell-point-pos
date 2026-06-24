@@ -19,6 +19,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   activityLogs  ActivityLog[]
+  resetTokens   ResetToken[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -28,6 +29,15 @@ model ActivityLog {
   userId    String
   action    String
   details   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
