@@ -38,20 +38,11 @@ const QUICK_PRODUCTS = [
   { name: "Back Cover", icon: Smartphone },
 ];
 
-export function BillingClient() {
+export function BillingClient({ initialProducts = [] }: { initialProducts?: any[] }) {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<{
-    id: string;
-    barcode: string | null;
-    sku: string;
-    name: string;
-    sellingPrice: number;
-    gstPercentage: number;
-    stockQuantity: number;
-  }[]>([]);
   
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerName, setCustomerName] = useState("");
@@ -61,43 +52,21 @@ export function BillingClient() {
   const [paymentMode, setPaymentMode] = useState<"CASH" | "UPI" | "CARD" | "SPLIT">("UPI");
   const [discount, setDiscount] = useState<number>(0);
   const [isPending, setIsPending] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
 
-  // Auto-focus search on load
+  const searchResults = searchQuery.trim().length < 2 ? [] : initialProducts.filter(p => {
+    const q = searchQuery.toLowerCase();
+    return p.name.toLowerCase().includes(q) ||
+           p.sku.toLowerCase().includes(q) ||
+           (p.barcode && p.barcode.toLowerCase().includes(q));
+  }).slice(0, 10);
+
+  // Auto-add if exact barcode match
   useEffect(() => {
-    searchInputRef.current?.focus();
-  }, []);
-
-  // Product Search
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (searchQuery.trim().length > 1) {
-        setIsSearching(true);
-        try {
-          const results = await searchProducts(searchQuery);
-          setSearchResults(results as any);
-
-          // Auto-add if exact barcode match
-          if (results.length === 1 && results[0].barcode === searchQuery) {
-            addToCart(results[0] as any);
-            setSearchQuery("");
-            setSearchResults([]);
-          }
-        } catch (error) {
-          console.error("Search failed:", error);
-          setSearchResults([]);
-        } finally {
-          setIsSearching(false);
-        }
-      } else {
-        setSearchResults([]);
-        setIsSearching(false);
-      }
-    };
-
-    const debounce = setTimeout(fetchResults, 300);
-    return () => clearTimeout(debounce);
-  }, [searchQuery]);
+    if (searchResults.length === 1 && searchResults[0].barcode === searchQuery) {
+      addToCart(searchResults[0]);
+      setSearchQuery("");
+    }
+  }, [searchQuery, searchResults]);
 
   // Customer Search
   useEffect(() => {
@@ -266,9 +235,7 @@ export function BillingClient() {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute left-0 right-0 top-full mt-2 z-50 bg-card/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden max-h-[300px] overflow-y-auto"
                 >
-                  {isSearching ? (
-                    <div className="p-4 text-center text-muted-foreground text-sm">Searching...</div>
-                  ) : searchResults.length === 0 ? (
+                  {searchResults.length === 0 ? (
                     <div className="p-4 text-center text-muted-foreground text-sm">No products found</div>
                   ) : (
                     searchResults.map((product) => (
@@ -277,7 +244,6 @@ export function BillingClient() {
                         onClick={() => {
                           addToCart(product);
                           setSearchQuery("");
-                          setSearchResults([]);
                         }}
                         className={`p-4 border-b border-white/5 cursor-pointer flex justify-between items-center transition-colors ${
                           product.stockQuantity > 0 ? "hover:bg-white/5" : "opacity-50 cursor-not-allowed bg-red-500/5"
@@ -304,19 +270,22 @@ export function BillingClient() {
             </AnimatePresence>
           </div>
 
-          <div className="bg-card glass-card rounded-2xl p-5 border border-white/5 flex flex-col justify-center">
+          {/* Browse Catalog */}
+          <div className="bg-card glass-card rounded-2xl p-5 border border-white/5 flex flex-col flex-1 min-h-[250px]">
             <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4" /> Quick Add
+              <LayoutGrid className="w-4 h-4" /> Browse Catalog
             </h2>
-            <div className="grid grid-cols-2 gap-2">
-              {QUICK_PRODUCTS.slice(0, 4).map((qp) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 overflow-y-auto pr-2 pb-2 content-start">
+              {initialProducts.map((p) => (
                 <button
-                  key={qp.name}
-                  onClick={() => setSearchQuery(qp.name)}
-                  className="flex flex-col items-center justify-center p-2 rounded-lg bg-black/20 hover:bg-primary/20 border border-white/5 hover:border-primary/30 transition-all group"
+                  key={p.id}
+                  onClick={() => addToCart(p)}
+                  disabled={p.stockQuantity <= 0}
+                  className={`flex flex-col items-center justify-center p-3 rounded-lg bg-black/20 hover:bg-primary/20 border border-white/5 transition-all group text-center h-28 ${p.stockQuantity <= 0 ? 'opacity-50 cursor-not-allowed grayscale' : 'hover:border-primary/30'}`}
                 >
-                  <qp.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary mb-1" />
-                  <span className="text-[10px] font-medium text-muted-foreground group-hover:text-primary">{qp.name}</span>
+                  <span className="text-xs font-medium text-foreground line-clamp-2 mb-1">{p.name}</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">Stock: {p.stockQuantity}</span>
+                  <span className="text-sm font-bold text-primary mt-auto">₹{p.sellingPrice}</span>
                 </button>
               ))}
             </div>
