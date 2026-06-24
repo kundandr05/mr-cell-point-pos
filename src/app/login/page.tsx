@@ -40,12 +40,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-muted/40">
+    <div className="flex h-screen w-full items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1A1A1A] via-background to-background">
       <Card className="w-full max-w-md glass-card">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
-          <CardDescription>
-            Enter your credentials to access the billing system
+        <CardHeader className="space-y-2 text-center pb-8">
+          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 border border-primary/20">
+            <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#D4A017] to-[#F3E5AB]">M</span>
+          </div>
+          <CardTitle className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
+            M R Cell Point
+          </CardTitle>
+          <CardDescription className="text-sm font-medium uppercase tracking-widest text-primary/80">
+            Authorized Portal
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -93,20 +98,18 @@ export default function LoginPage() {
               )}
             </div>
           </CardContent>
-          <CardFooter className="flex-col space-y-4">
-            <Button className="w-full" type="submit" disabled={isPending}>
-              {isPending ? "Signing in..." : "Sign in"}
+          <CardFooter className="flex-col space-y-4 pt-6">
+            <Button className="w-full h-12 text-md font-semibold bg-primary hover:bg-primary/90 text-primary-foreground transition-all shadow-[0_0_15px_rgba(212,160,23,0.3)] hover:shadow-[0_0_25px_rgba(212,160,23,0.5)]" type="submit" disabled={isPending}>
+              {isPending ? "Authenticating..." : "Secure Login"}
             </Button>
+            <div className="text-sm text-muted-foreground text-center">
+              Don&apos;t have an admin account?{" "}
+              <a href="/register" className="text-primary hover:text-primary/80 hover:underline font-medium transition-colors">
+                Register here
+              </a>
+            </div>
           </CardFooter>
         </form>
-        <div className="px-6 pb-6 space-y-4 text-center">
-          <div className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <a href="/register" className="text-primary hover:underline font-medium">
-              Sign up
-            </a>
-          </div>
-        </div>
       </Card>
     </div>
   );
