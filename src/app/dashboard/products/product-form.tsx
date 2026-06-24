@@ -118,25 +118,23 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Brand *</Label>
-                <Select onValueChange={(val) => setValue("brandId", String(val || ""))}>
-                  <SelectTrigger className={errors.brandId ? "border-destructive" : ""}>
-                    <SelectValue placeholder="Select Brand" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {brands.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <select 
+                  className={`flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.brandId ? "border-destructive" : ""}`}
+                  {...register("brandId")}
+                >
+                  <option value="">Select Brand</option>
+                  {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                </select>
               </div>
               <div className="grid gap-2">
                 <Label>Category *</Label>
-                <Select onValueChange={(val) => setValue("categoryId", String(val || ""))}>
-                  <SelectTrigger className={errors.categoryId ? "border-destructive" : ""}>
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <select 
+                  className={`flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.categoryId ? "border-destructive" : ""}`}
+                  {...register("categoryId")}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
               </div>
             </div>
 
@@ -152,18 +150,17 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="gstPercentage">GST %</Label>
-                <Select defaultValue="18" onValueChange={(val) => setValue("gstPercentage", String(val || "18"))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="GST %" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">0%</SelectItem>
-                    <SelectItem value="5">5%</SelectItem>
-                    <SelectItem value="12">12%</SelectItem>
-                    <SelectItem value="18">18%</SelectItem>
-                    <SelectItem value="28">28%</SelectItem>
-                  </SelectContent>
-                </Select>
+                <select 
+                  id="gstPercentage"
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  {...register("gstPercentage")}
+                >
+                  <option value="0">0%</option>
+                  <option value="5">5%</option>
+                  <option value="12">12%</option>
+                  <option value="18">18%</option>
+                  <option value="28">28%</option>
+                </select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="hsnCode">HSN Code</Label>
@@ -183,14 +180,13 @@ export function ProductForm({ brands, categories, suppliers }: ProductFormProps)
               </div>
               <div className="grid gap-2">
                 <Label>Supplier</Label>
-                <Select onValueChange={(val) => setValue("supplierId", String(val || ""))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Supplier" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {suppliers.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                <select 
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  {...register("supplierId")}
+                >
+                  <option value="">Select Supplier</option>
+                  {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
               </div>
             </div>
           </div>
