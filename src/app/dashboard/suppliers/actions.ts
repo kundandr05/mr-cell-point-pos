@@ -55,3 +55,19 @@ export async function deleteSupplier(id: string) {
     return { success: false, error: "Failed to delete supplier." };
   }
 }
+
+export async function editSupplier(id: string, data: SupplierInput) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  try {
+    const supplier = await prisma.supplier.update({
+      where: { id },
+      data,
+    });
+    revalidatePath("/dashboard", "layout");
+    return { success: true, supplier };
+  } catch (error: any) {
+    return { success: false, error: "Failed to edit supplier." };
+  }
+}

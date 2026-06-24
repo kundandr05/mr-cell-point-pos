@@ -49,6 +49,27 @@ export async function toggleBrandStatus(id: string, isActive: boolean) {
   }
 }
 
+export async function editBrand(id: string, name: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+  if (!name.trim()) return { success: false, error: "Brand name is required." };
+
+  try {
+    const brand = await prisma.brand.update({
+      where: { id },
+      data: { name },
+    });
+    revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/products");
+    return { success: true, brand };
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return { success: false, error: "A brand with this name already exists." };
+    }
+    return { success: false, error: "Failed to edit brand." };
+  }
+}
+
 export async function deleteBrand(id: string) {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");

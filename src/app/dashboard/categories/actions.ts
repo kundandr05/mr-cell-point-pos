@@ -49,6 +49,27 @@ export async function toggleCategoryStatus(id: string, isActive: boolean) {
   }
 }
 
+export async function editCategory(id: string, name: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+  if (!name.trim()) return { success: false, error: "Category name is required." };
+
+  try {
+    const category = await prisma.category.update({
+      where: { id },
+      data: { name },
+    });
+    revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/products");
+    return { success: true, category };
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return { success: false, error: "A category with this name already exists." };
+    }
+    return { success: false, error: "Failed to edit category." };
+  }
+}
+
 export async function deleteCategory(id: string) {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");

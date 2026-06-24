@@ -114,6 +114,42 @@ export async function deleteProduct(id: string) {
   }
 }
 
+export async function editProduct(id: string, data: Partial<ProductInput>) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  try {
+    const updateData: any = {};
+    if (data.sku !== undefined) updateData.sku = data.sku;
+    if (data.barcode !== undefined) updateData.barcode = data.barcode || null;
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.brandId !== undefined) updateData.brandId = data.brandId;
+    if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+    if (data.supplierId !== undefined) updateData.supplierId = data.supplierId || null;
+    if (data.hsnCode !== undefined) updateData.hsnCode = data.hsnCode || null;
+    if (data.gstPercentage !== undefined) updateData.gstPercentage = parseFloat(data.gstPercentage);
+    if (data.purchasePrice !== undefined) updateData.purchasePrice = parseFloat(data.purchasePrice);
+    if (data.sellingPrice !== undefined) updateData.sellingPrice = parseFloat(data.sellingPrice);
+    if (data.stockQuantity !== undefined) updateData.stockQuantity = parseInt(data.stockQuantity);
+    if (data.reorderLevel !== undefined) updateData.reorderLevel = parseInt(data.reorderLevel);
+    if (data.warrantyPeriod !== undefined) updateData.warrantyPeriod = data.warrantyPeriod || null;
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: updateData,
+    });
+    
+    revalidatePath("/dashboard/products");
+    return { success: true, product };
+  } catch (error: any) {
+    console.error("Failed to edit product:", error);
+    if (error.code === "P2002") {
+      return { success: false, error: "A product with this SKU or Barcode already exists." };
+    }
+    return { success: false, error: "Failed to edit product." };
+  }
+}
+
 export async function generateSkuAndBarcode() {
   const session = await auth();
   if (!session) throw new Error("Unauthorized");

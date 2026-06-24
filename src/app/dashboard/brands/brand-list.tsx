@@ -6,6 +6,7 @@ import { DeleteBrandButton } from "./delete-brand-button";
 import { SearchInput } from "@/components/ui/search-input";
 import { Switch } from "@/components/ui/switch";
 import { toggleBrandStatus } from "./actions";
+import { EditBrandModal } from "./edit-brand-modal";
 import { toast } from "sonner";
 
 interface Brand {
@@ -80,7 +81,10 @@ export function BrandList({ initialBrands }: { initialBrands: Brand[] }) {
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <DeleteBrandButton id={brand.id} name={brand.name} />
+                    <div className="flex items-center justify-end gap-2">
+                      <EditBrandModal brand={brand} />
+                      <DeleteBrandButton id={brand.id} name={brand.name} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

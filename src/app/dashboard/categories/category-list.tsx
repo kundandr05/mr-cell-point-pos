@@ -6,6 +6,7 @@ import { DeleteCategoryButton } from "./delete-category-button";
 import { SearchInput } from "@/components/ui/search-input";
 import { Switch } from "@/components/ui/switch";
 import { toggleCategoryStatus } from "./actions";
+import { EditCategoryModal } from "./edit-category-modal";
 import { toast } from "sonner";
 
 interface Category {
@@ -77,7 +78,10 @@ export function CategoryList({ initialCategories }: { initialCategories: Categor
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    <DeleteCategoryButton id={category.id} name={category.name} />
+                    <div className="flex items-center justify-end gap-2">
+                      <EditCategoryModal category={category} />
+                      <DeleteCategoryButton id={category.id} name={category.name} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

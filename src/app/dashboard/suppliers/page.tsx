@@ -1,8 +1,7 @@
 import { getSuppliers } from "./actions";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SupplierForm } from "./supplier-form";
-import { DeleteSupplierButton } from "./delete-supplier-button";
+import { SupplierList } from "./supplier-list";
 
 export const dynamic = 'force-dynamic';
 
@@ -25,38 +24,7 @@ export default async function SuppliersPage() {
           <CardDescription>A list of all suppliers you do business with.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact Person</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Items Supplied</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {suppliers.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground h-24">
-                    No suppliers found. Add one to get started.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                suppliers.map((supplier) => (
-                  <TableRow key={supplier.id}>
-                    <TableCell className="font-medium">{supplier.name}</TableCell>
-                    <TableCell>{supplier.contactPerson || "-"}</TableCell>
-                    <TableCell>{supplier.phoneNumber || "-"}</TableCell>
-                    <TableCell>{supplier.suppliedItem || "-"}</TableCell>
-                    <TableCell className="text-right">
-                      <DeleteSupplierButton id={supplier.id} name={supplier.name} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <SupplierList initialSuppliers={suppliers} />
         </CardContent>
       </Card>
     </div>

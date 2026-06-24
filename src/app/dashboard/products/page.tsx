@@ -1,11 +1,7 @@
-import { getProducts, getProductFormData, deleteProduct } from "./actions";
+import { getProducts, getProductFormData } from "./actions";
 import { ProductForm } from "./product-form";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
-import { ProductSearch } from "./product-search";
+import { ProductList } from "./product-list";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +21,6 @@ export default async function ProductsPage({ searchParams }: { searchParams: { q
           <p className="text-muted-foreground">Manage your product inventory, pricing, and stock.</p>
         </div>
         <div className="flex items-center gap-4">
-          <ProductSearch />
           <ProductForm brands={formData.brands} categories={formData.categories} suppliers={formData.suppliers} />
         </div>
       </div>
@@ -36,57 +31,12 @@ export default async function ProductsPage({ searchParams }: { searchParams: { q
           <CardDescription>A list of all products in your shop.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product Name</TableHead>
-                <TableHead>SKU / Barcode</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Brand</TableHead>
-                <TableHead className="text-right">Price</TableHead>
-                <TableHead className="text-right">Stock</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground h-24">
-                    {query ? `No products found matching "${query}"` : "No products found. Add a product to get started."}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>
-                      <div className="text-xs text-muted-foreground">{product.sku}</div>
-                      <div className="font-mono text-xs">{product.barcode || "-"}</div>
-                    </TableCell>
-                    <TableCell>{product.category.name}</TableCell>
-                    <TableCell>{product.brand.name}</TableCell>
-                    <TableCell className="text-right">₹{product.sellingPrice}</TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant={product.stockQuantity <= product.reorderLevel ? "destructive" : "secondary"}>
-                        {product.stockQuantity}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {/* Simple delete button form for now */}
-                      <form action={async () => {
-                        "use server";
-                        await deleteProduct(product.id);
-                      }}>
-                        <Button variant="ghost" size="sm" type="submit" className="text-destructive hover:bg-destructive/10">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+          <ProductList 
+            initialProducts={products}
+            brands={formData.brands}
+            categories={formData.categories}
+            suppliers={formData.suppliers}
+          />
         </CardContent>
       </Card>
     </div>
