@@ -26,8 +26,14 @@ export async function getProductFormData() {
   if (!session) throw new Error("Unauthorized");
 
   const [brands, categories, suppliers] = await Promise.all([
-    prisma.brand.findMany({ orderBy: { name: "asc" } }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.brand.findMany({ 
+      where: { isActive: true },
+      orderBy: { name: "asc" } 
+    }),
+    prisma.category.findMany({ 
+      where: { isActive: true },
+      orderBy: { name: "asc" } 
+    }),
     prisma.supplier.findMany({ orderBy: { name: "asc" } }),
   ]);
   

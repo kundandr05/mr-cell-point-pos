@@ -1,38 +1,56 @@
-import { PrismaClient, Role } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const defaultBrands = [
+  "Apple", "Samsung", "Boat", "JBL", "Realme", "Xiaomi", 
+  "OnePlus", "Oppo", "Vivo", "Noise", "Sony", "Portronics", 
+  "Ambrane", "Syska", "Anker"
+];
+
+const defaultCategories = [
+  "Chargers", "USB Cables", "Earphones", "Neckbands", 
+  "Bluetooth Speakers", "Power Banks", "Mobile Cases", 
+  "Tempered Glass", "Smart Watches", "Memory Cards", 
+  "Mobile Holders", "Adapters", "Car Chargers", 
+  "Data Cables", "Accessories"
+];
+
 async function main() {
-  const email = 'owner@mrcellpoint.com';
-  const password = 'Admin12345';
-  
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  
-  if (existingUser) {
-    console.log('Owner user already exists.');
-    return;
+  console.log("Starting seed process...");
+
+  // Seed Brands
+  for (const brandName of defaultBrands) {
+    await prisma.brand.upsert({
+      where: { name: brandName },
+      update: {}, // Do nothing if it exists
+      create: {
+        name: brandName,
+        isActive: true,
+      },
+    });
+    console.log(`Upserted Brand: ${brandName}`);
   }
-  
-  const hashedPassword = await bcrypt.hash(password, 10);
-  
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name: 'Owner',
-      password: hashedPassword,
-      role: Role.OWNER,
-    },
-  });
-  
-  console.log('Created owner user:');
-  console.log(`Email: ${user.email}`);
-  console.log(`Password: ${password}`);
+
+  // Seed Categories
+  for (const categoryName of defaultCategories) {
+    await prisma.category.upsert({
+      where: { name: categoryName },
+      update: {}, // Do nothing if it exists
+      create: {
+        name: categoryName,
+        isActive: true,
+      },
+    });
+    console.log(`Upserted Category: ${categoryName}`);
+  }
+
+  console.log("Seed completed successfully!");
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("Error during seeding:", e);
     process.exit(1);
   })
   .finally(async () => {
