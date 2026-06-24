@@ -26,8 +26,9 @@ async function getShopSettings() {
   return await prisma.shopSettings.findFirst();
 }
 
-export default async function InvoicePrintPage({ params }: { params: { id: string } }) {
-  const invoice = await getInvoice(params.id);
+export default async function InvoicePrintPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const invoice = await getInvoice(resolvedParams.id);
   const settings = await getShopSettings();
 
   if (!invoice) return notFound();
