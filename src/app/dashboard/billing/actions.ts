@@ -29,6 +29,23 @@ export async function searchProducts(query: string) {
   });
 }
 
+export async function searchCustomers(query: string) {
+  const session = await auth();
+  if (!session) throw new Error("Unauthorized");
+
+  if (!query) return [];
+
+  return await prisma.customer.findMany({
+    where: {
+      phone: { contains: query }
+    },
+    take: 5,
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+}
+
 interface InvoiceItemInput {
   productId: string;
   quantity: number;
@@ -64,9 +81,33 @@ export async function createInvoice(data: InvoiceInput) {
       const count = await tx.invoice.count();
       const invoiceNumber = `${prefix}${(count + 1).toString().padStart(4, '0')}`;
       
+      // Handle customer auto-creation or linking
+      let customerId = null;
+      if (data.customerPhone) {
+        // Try to find existing customer by phone
+        let customer = await tx.customer.findUnique({
+          where: { phone: data.customerPhone }
+        });
+        
+        // If no customer exists, create one automatically
+        if (!customer && data.customerName) {
+          customer = await tx.customer.create({
+            data: {
+              name: data.customerName,
+              phone: data.customerPhone,
+            }
+          });
+        }
+        
+        if (customer) {
+          customerId = customer.id;
+        }
+      }
+      
       const invoice = await tx.invoice.create({
         data: {
           invoiceNumber,
+          customerId,
           customerName: data.customerName || null,
           customerPhone: data.customerPhone || null,
           paymentMode: data.paymentMode,
