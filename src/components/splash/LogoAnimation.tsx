@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 export function LogoAnimation() {
   return (
@@ -29,17 +29,9 @@ export function LogoAnimation() {
           scale: { duration: 1.2, ease: "easeOut", delay: 0.5 },
           y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }
         }}
-        className="relative flex items-center justify-center bg-black rounded-full shadow-[0_0_35px_rgba(212,175,55,0.7)] z-20"
+        className="relative z-20"
       >
-        <Image
-          src="/logo.png"
-          alt="MR Cell Point"
-          width={190}
-          height={190}
-          className="w-[170px] h-[170px] md:w-[190px] md:h-[190px] object-cover rounded-full"
-          priority
-          quality={100}
-        />
+        <BrandLogo size="splash" />
         
         {/* Shine Effect */}
         <motion.div

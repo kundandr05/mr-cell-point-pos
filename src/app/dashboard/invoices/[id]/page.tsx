@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { InvoiceActions } from "@/components/invoice-actions";
-import { Logo } from "@/components/ui/logo";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
@@ -62,7 +62,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         <div className="flex justify-between items-start border-b-2 border-[#D4A017]/50 pb-6 mb-6 pt-4">
           <div className="flex items-center gap-4">
             <div>
-              <Logo size="xl" />
+              <BrandLogo size="xl" />
             </div>
             <div>
               <h1 className="text-3xl font-black uppercase tracking-tight">{settings?.name || "M R Cell Point"}</h1>

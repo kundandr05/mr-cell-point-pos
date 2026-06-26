@@ -1,26 +1,29 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface LogoProps {
+interface BrandLogoProps {
   className?: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "sidebar" | "lg" | "xl" | "splash";
   withText?: boolean;
 }
 
-export function Logo({ className, size = "md", withText = false }: LogoProps) {
+export function BrandLogo({ className, size = "sidebar", withText = false }: BrandLogoProps) {
   const sizeClasses = {
     sm: "w-8 h-8",
-    md: "w-10 h-10 md:w-12 md:h-12", // 40-48px for Sidebar
+    sidebar: "w-[44px] h-[44px]",
     lg: "w-16 h-16 md:w-20 md:h-20", 
-    xl: "w-[90px] h-[90px] md:w-[110px] md:h-[110px]", // 90-110px for Login Page
+    xl: "w-[90px] h-[90px] md:w-[110px] md:h-[110px]", 
+    splash: "w-[170px] h-[170px] md:w-[190px] md:h-[190px]",
   };
 
   return (
-    <div className={cn("flex items-center gap-3", className)}>
+    <div className={cn("flex items-center gap-3 group", className)}>
       <div
         className={cn(
           "flex items-center justify-center relative shrink-0",
-          "bg-black rounded-full border border-[#D4AF37]/50 shadow-[0_0_15px_rgba(212,175,55,0.4)] overflow-hidden",
+          "bg-black rounded-full border border-[#D4AF37]/50 overflow-hidden",
+          "shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all duration-300",
+          "group-hover:shadow-[0_0_25px_rgba(212,175,55,0.8)] group-hover:border-[#D4AF37]",
           sizeClasses[size]
         )}
       >
