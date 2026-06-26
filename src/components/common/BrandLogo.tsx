@@ -40,18 +40,17 @@ export function BrandLogo({
       <div
         className={cn(
           "flex items-center justify-center relative shrink-0",
-          "bg-black rounded-full border border-[#D4AF37] overflow-hidden",
-          glow && "shadow-[0_0_15px_rgba(212,175,55,0.4)]",
-          glow && animated && "transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(212,175,55,0.8)]",
+          glow && "drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]",
+          glow && animated && "transition-all duration-300 group-hover:drop-shadow-[0_0_25px_rgba(212,175,55,0.8)]",
           sizeClasses[size]
         )}
       >
         <Image 
-          src="/logo.png" 
+          src="/logo.jpg" 
           alt="MR Cell Point Logo" 
           width={currentSize}
           height={currentSize}
-          className="w-full h-full object-cover rounded-full" 
+          className="w-full h-full object-contain" 
           priority
           quality={100}
         />
