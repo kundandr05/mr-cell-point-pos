@@ -12,12 +12,12 @@ export function LogoAnimation() {
         initial={{ opacity: 0, scale: 0.5, rotate: -90 }}
         animate={{ opacity: 1, scale: 1, rotate: 0 }}
         transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-        className="absolute w-[240px] h-[240px] rounded-full border-[3px] border-t-[#D4AF37] border-r-[#FFD54F] border-b-transparent border-l-transparent opacity-80"
+        className="absolute w-[200px] h-[200px] md:w-[240px] md:h-[240px] lg:w-[280px] lg:h-[280px] rounded-full border-[3px] border-t-[#D4AF37] border-r-[#FFD54F] border-b-transparent border-l-transparent opacity-80"
       />
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[260px] h-[260px] rounded-full border-[1px] border-dashed border-[#D4AF37]/40"
+        className="absolute w-[220px] h-[220px] md:w-[260px] md:h-[260px] lg:w-[300px] lg:h-[300px] rounded-full border-[1px] border-dashed border-[#D4AF37]/40"
       />
 
       {/* Main Logo */}
@@ -25,22 +25,26 @@ export function LogoAnimation() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 }}
-        className="relative w-[180px] h-[180px] flex items-center justify-center bg-transparent drop-shadow-[0_0_15px_rgba(212,160,23,0.3)]"
+        className="relative w-[150px] h-[150px] md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] rounded-full flex items-center justify-center bg-transparent shadow-[0_0_25px_rgba(212,175,55,0.6)] p-4 md:p-5 lg:p-6"
       >
-        <Image
-          src="/logo.jpg"
-          alt="MR Cell Point"
-          fill
-          className="object-contain"
-          priority
-        />
+        <div className="relative w-full h-full drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+          <Image
+            src="/logo.jpg"
+            alt="MR Cell Point"
+            fill
+            className="object-contain"
+            priority
+            sizes="(max-width: 768px) 150px, (max-width: 1024px) 180px, 220px"
+            quality={100}
+          />
+        </div>
         
         {/* Shine Effect */}
         <motion.div
           initial={{ x: "-100%", skewX: -20 }}
           animate={{ x: "200%" }}
-          transition={{ duration: 1.5, ease: "easeInOut", delay: 1.5 }}
-          className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent z-20 pointer-events-none"
+          transition={{ duration: 2, ease: "easeInOut", delay: 1.5 }}
+          className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent z-20 pointer-events-none rounded-full"
         />
       </motion.div>
 
