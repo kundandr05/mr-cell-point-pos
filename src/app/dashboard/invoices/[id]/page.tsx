@@ -42,7 +42,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
   const totalSgst = invoice.sgst;
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 h-full overflow-y-auto">
+    <div className="max-w-4xl mx-auto py-8 px-4 h-full overflow-y-auto print:p-0 print:m-0 print:w-full print:max-w-none print:overflow-visible">
       
       {/* Action Bar (Hidden when printing) */}
       <div className="flex justify-between items-center mb-8 print:hidden">
@@ -61,7 +61,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Invoice Document - Styled for Paper/Thermal Print */}
-      <div id="invoice-print-area" className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] print:shadow-none print:p-0 print:rounded-none max-w-[800px] mx-auto relative overflow-hidden font-sans">
+      <div id="invoice-print-area" className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none max-w-[800px] mx-auto relative overflow-hidden font-sans">
         
         {/* Header Section */}
         <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-4 pt-2">

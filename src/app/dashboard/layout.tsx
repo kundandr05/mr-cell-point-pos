@@ -15,9 +15,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <div className="flex h-screen w-full bg-background overflow-hidden">
+    <div className="flex h-screen w-full bg-background overflow-hidden print:h-auto print:overflow-visible print:bg-white">
       {/* Desktop Sidebar (Hidden on Mobile) */}
-      <aside className="hidden md:flex w-64 border-r bg-card glass-card flex-col z-10">
+      <aside className="hidden md:flex w-64 border-r bg-card glass-card flex-col z-10 print:hidden">
         <div className="h-16 flex items-center px-6 border-b border-white/5">
           <BrandLogo showText size="sm" animated glow />
         </div>
@@ -45,8 +45,8 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden relative z-0">
-        <header className="h-16 border-b border-white/5 bg-card/50 backdrop-blur-xl flex items-center px-4 md:px-6 justify-between shrink-0">
+      <main className="flex-1 flex flex-col overflow-hidden relative z-0 print:overflow-visible print:bg-white">
+        <header className="h-16 border-b border-white/5 bg-card/50 backdrop-blur-xl flex items-center px-4 md:px-6 justify-between shrink-0 print:hidden">
           <div className="md:hidden">
             <BrandLogo size="md" showText animated glow />
           </div>
@@ -55,12 +55,14 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           </div>
         </header>
         {/* pb-20 on mobile ensures content isn't hidden behind the bottom nav */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6 print:overflow-visible print:p-0">
           {children}
         </div>
       </main>
 
-      <MobileNav />
+      <div className="print:hidden">
+        <MobileNav />
+      </div>
     </div>
   );
 }
