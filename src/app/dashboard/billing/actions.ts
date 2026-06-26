@@ -53,6 +53,7 @@ interface InvoiceItemInput {
   quantity: number;
   rate: number;
   gstPercent: number;
+  discount: number;
   gstAmount: number;
   totalAmount: number;
 }
@@ -125,6 +126,7 @@ export async function createInvoice(data: InvoiceInput) {
               quantity: item.quantity,
               rate: item.rate,
               gstPercent: item.gstPercent,
+              discount: item.discount,
               gstAmount: item.gstAmount,
               totalAmount: item.totalAmount,
             }))

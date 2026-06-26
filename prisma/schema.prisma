@@ -129,6 +129,7 @@ model Product {
   name           String
   brandId        String
   categoryId     String
+  image          String?
   hsnCode        String?
   gstPercentage  Float
   purchasePrice  Float
@@ -211,6 +212,7 @@ model InvoiceItem {
   quantity    Int
   rate        Float
   gstPercent  Float
+  discount    Float    @default(0)
   gstAmount   Float
   totalAmount Float
   invoice     Invoice  @relation(fields: [invoiceId], references: [id])

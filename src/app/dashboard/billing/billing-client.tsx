@@ -19,8 +19,11 @@ type CartItem = {
   quantity: number;
   gstPercent: number;
   gstAmount: number;
+  discount: number;
   totalAmount: number;
   stockQuantity: number;
+  brandName?: string;
+  image?: string | null;
 };
 
 type Customer = {
@@ -52,6 +55,49 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
   const [paymentMode, setPaymentMode] = useState<"CASH" | "UPI" | "CARD" | "SPLIT">("UPI");
   const [discount, setDiscount] = useState<number>(0);
   const [isPending, setIsPending] = useState(false);
+  
+  // Hold / Resume Bill
+  const [heldBills, setHeldBills] = useState<any[]>([]);
+  useEffect(() => {
+    const saved = localStorage.getItem("heldBills");
+    if (saved) setHeldBills(JSON.parse(saved));
+  }, []);
+
+  const holdBill = () => {
+    if (cart.length === 0) return toast.error("Cart is empty");
+    const newHeld = [...heldBills, { id: Date.now(), cart, customerName, customerPhone, discount }];
+    setHeldBills(newHeld);
+    localStorage.setItem("heldBills", JSON.stringify(newHeld));
+    setCart([]); setCustomerName(""); setCustomerPhone(""); setDiscount(0);
+    toast.success("Bill put on hold");
+  };
+
+  const resumeBill = (id: number) => {
+    const bill = heldBills.find(b => b.id === id);
+    if (!bill) return;
+    setCart(bill.cart);
+    setCustomerName(bill.customerName);
+    setCustomerPhone(bill.customerPhone);
+    setDiscount(bill.discount);
+    const newHeld = heldBills.filter(b => b.id !== id);
+    setHeldBills(newHeld);
+    localStorage.setItem("heldBills", JSON.stringify(newHeld));
+    toast.success("Bill resumed");
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F2") { e.preventDefault(); searchInputRef.current?.focus(); }
+      if (e.key === "F4") { e.preventDefault(); document.getElementById("customer-phone")?.focus(); }
+      if (e.key === "F6") { e.preventDefault(); document.getElementById("payment-mode-trigger")?.focus(); }
+      if (e.key === "F8") { e.preventDefault(); /* Print logic if on invoice page */ }
+      if (e.key === "F9") { e.preventDefault(); handleCheckout(); }
+      if (e.key === "Escape") { e.preventDefault(); setCart([]); setCustomerName(""); setCustomerPhone(""); }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [cart, customerName, customerPhone, paymentMode, discount]);
 
   const searchResults = searchQuery.trim().length < 2 ? [] : initialProducts.filter(p => {
     const q = searchQuery.toLowerCase();
@@ -89,7 +135,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
     setCustomerResults([]);
   };
 
-  const addToCart = (product: { id: string; name: string; sku: string; sellingPrice: number; gstPercentage: number; stockQuantity: number }) => {
+  const addToCart = (product: any) => {
     if (product.stockQuantity <= 0) {
       toast.error(`Out of stock: ${product.name}`);
       return;
@@ -115,7 +161,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
               ...item,
               quantity: qty,
               gstAmount: totalGst,
-              totalAmount: product.sellingPrice * qty
+              totalAmount: (product.sellingPrice * qty) - item.discount
             };
           }
           return item;
@@ -133,9 +179,12 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
           rate: baseRate,
           quantity: qty,
           gstPercent: product.gstPercentage,
+          discount: 0,
           gstAmount: totalGst,
           totalAmount: product.sellingPrice * qty,
-          stockQuantity: product.stockQuantity
+          stockQuantity: product.stockQuantity,
+          brandName: product.brand?.name,
+          image: product.image
         }];
       }
     });
@@ -144,22 +193,36 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
     toast.success(`Added ${product.name}`);
   };
 
-  const updateQuantity = (productId: string, delta: number) => {
+  const updateQuantity = (productId: string, newQty: number) => {
     setCart((prev) => prev.map(item => {
       if (item.productId === productId) {
-        const newQty = Math.max(1, item.quantity + delta);
         if (newQty > item.stockQuantity) {
           toast.error(`Cannot add more. Only ${item.stockQuantity} in stock.`);
           return item;
         }
+        if (newQty < 1) return item;
 
-        const singleTotalAmount = item.totalAmount / item.quantity;
-        const newTotalAmount = singleTotalAmount * newQty;
         const singleBaseRate = item.rate;
         const newTotalBase = singleBaseRate * newQty;
-        const newGstAmount = newTotalAmount - newTotalBase;
+        // rate * (1 + gst/100) = sellingPrice
+        const sellingPrice = singleBaseRate * (1 + (item.gstPercent / 100));
+        const newTotalAmount = (sellingPrice * newQty) - item.discount;
+        const newGstAmount = (sellingPrice * newQty) - newTotalBase;
 
         return { ...item, quantity: newQty, gstAmount: newGstAmount, totalAmount: newTotalAmount };
+      }
+      return item;
+    }));
+  };
+  
+  const updateItemDiscount = (productId: string, newDiscount: number) => {
+    setCart((prev) => prev.map(item => {
+      if (item.productId === productId) {
+        const singleBaseRate = item.rate;
+        const newTotalBase = singleBaseRate * item.quantity;
+        const sellingPrice = singleBaseRate * (1 + (item.gstPercent / 100));
+        const newTotalAmount = (sellingPrice * item.quantity) - newDiscount;
+        return { ...item, discount: newDiscount, totalAmount: newTotalAmount };
       }
       return item;
     }));
@@ -251,6 +314,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
                       >
                         <div>
                           <p className="font-semibold text-foreground flex items-center gap-2">
+                            {product.image && <img src={product.image} alt="" className="w-6 h-6 rounded object-cover" />}
                             {product.name}
                             {product.stockQuantity <= 0 && (
                               <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full uppercase tracking-wider">Out of Stock</span>
@@ -301,6 +365,19 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
             <div className="text-sm text-muted-foreground bg-black/40 px-3 py-1 rounded-full border border-white/5">
               {cart.length} Items
             </div>
+            <div className="ml-4 flex gap-2">
+              <Button size="sm" variant="outline" onClick={holdBill} className="h-8">Hold</Button>
+              {heldBills.length > 0 && (
+                <Select onValueChange={(val) => resumeBill(Number(val))}>
+                  <SelectTrigger className="h-8 w-24"><SelectValue placeholder="Resume" /></SelectTrigger>
+                  <SelectContent>
+                    {heldBills.map((b) => (
+                      <SelectItem key={b.id} value={b.id.toString()}>{b.customerName || 'Walk-in'} (₹{b.cart.reduce((acc: number, item: any) => acc + item.totalAmount, 0).toFixed(0)})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
           </div>
           
           <div className="flex-1 overflow-auto p-0">
@@ -318,6 +395,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
                     <th className="px-4 py-3 font-medium">Product</th>
                     <th className="px-4 py-3 font-medium text-center">Qty</th>
                     <th className="px-4 py-3 font-medium text-right">Rate</th>
+                    <th className="px-4 py-3 font-medium text-right">Discount</th>
                     <th className="px-4 py-3 font-medium text-right">Total</th>
                     <th className="px-4 py-3 text-center"></th>
                   </tr>
@@ -332,22 +410,28 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
                         exit={{ opacity: 0, x: -20 }}
                         className="hover:bg-white/[0.02] transition-colors"
                       >
-                        <td className="px-4 py-4">
-                          <p className="font-medium text-foreground">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">{item.sku} | GST: {item.gstPercent}%</p>
+                        <td className="px-4 py-4 flex items-center gap-3">
+                          {item.image && <img src={item.image} alt="" className="w-10 h-10 rounded object-cover border border-white/10" />}
+                          <div>
+                            <p className="font-medium text-foreground">{item.name}</p>
+                            <p className="text-xs text-muted-foreground">{item.sku} | GST: {item.gstPercent}%</p>
+                          </div>
                         </td>
                         <td className="px-4 py-4 text-center">
                           <div className="flex items-center justify-center gap-2">
-                            <button onClick={() => updateQuantity(item.productId, -1)} className="w-6 h-6 rounded-md bg-black/40 flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} className="w-6 h-6 rounded-md bg-black/40 flex items-center justify-center hover:bg-white/10 transition-colors">
                               <Minus className="w-3 h-3" />
                             </button>
-                            <span className="w-6 font-semibold">{item.quantity}</span>
-                            <button onClick={() => updateQuantity(item.productId, 1)} className="w-6 h-6 rounded-md bg-black/40 flex items-center justify-center hover:bg-white/10 transition-colors">
+                            <Input type="number" value={item.quantity} onChange={(e) => updateQuantity(item.productId, Number(e.target.value))} className="w-12 h-8 text-center bg-black/40 border-white/10" />
+                            <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="w-6 h-6 rounded-md bg-black/40 flex items-center justify-center hover:bg-white/10 transition-colors">
                               <Plus className="w-3 h-3" />
                             </button>
                           </div>
                         </td>
                         <td className="px-4 py-4 text-right">₹{item.rate.toFixed(2)}</td>
+                        <td className="px-4 py-4 text-right">
+                          <Input type="number" value={item.discount} onChange={(e) => updateItemDiscount(item.productId, Number(e.target.value))} className="w-16 h-8 ml-auto text-right bg-black/40 border-white/10" />
+                        </td>
                         <td className="px-4 py-4 text-right font-bold text-primary">₹{item.totalAmount.toFixed(2)}</td>
                         <td className="px-4 py-4 text-center">
                           <button 
@@ -383,6 +467,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
                   placeholder="Enter phone number"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
+                  id="customer-phone"
                   className="bg-black/40 border-white/10 pl-10 h-11 rounded-xl"
                 />
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -463,7 +548,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
             <div className="pt-4 mt-auto">
               <Label className="text-xs text-muted-foreground mb-2 block">Payment Mode</Label>
               <Select value={paymentMode} onValueChange={(val: any) => setPaymentMode(val)}>
-                <SelectTrigger className="w-full bg-black/40 border-white/10 h-11 rounded-xl">
+                <SelectTrigger id="payment-mode-trigger" className="w-full bg-black/40 border-white/10 h-11 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
