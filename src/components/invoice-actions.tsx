@@ -35,33 +35,11 @@ export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
     window.open(whatsappUrl, '_blank');
   };
 
-  const handleDownloadPdf = async () => {
-    const html2canvas = (await import('html2canvas')).default;
-    const { jsPDF } = await import('jspdf');
-
-    const invoiceElement = document.getElementById("invoice-print-area");
-    if (!invoiceElement) return;
-
-    try {
-      const canvas = await html2canvas(invoiceElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false
-      });
-      
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${invoiceData.invoiceNumber}.pdf`);
-    } catch (error) {
-      console.error("Failed to generate PDF", error);
-      alert("Could not generate PDF");
-    }
-  };
+  /* 
+   * PDF Download functionality has been temporarily disabled.
+   * It will be re-introduced in a future phase using a more reliable implementation.
+   * Users should use the browser's native Print dialog ("Save as PDF") instead.
+   */
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -72,13 +50,9 @@ export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
       >
         <MessageCircle className="h-5 w-5" /> Share
       </Button>
-      <Button 
-        onClick={handleDownloadPdf}
-        variant="outline"
-        className="border-white/10 hover:bg-white/5 px-4 py-2 rounded-xl transition-all flex items-center gap-2"
-      >
-        <Printer className="h-5 w-5" /> Save PDF
-      </Button>
+      
+      {/* PDF Button removed */}
+
       <Button 
         onClick={() => window.print()}
         className="bg-primary text-primary-foreground px-6 py-2 rounded-xl shadow-[0_0_20px_rgba(212,160,23,0.3)] hover:shadow-[0_0_30px_rgba(212,160,23,0.5)] transition-all flex items-center gap-2"
