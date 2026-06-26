@@ -22,22 +22,24 @@ export function LogoAnimation() {
 
       {/* Main Logo */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 }}
-        className="relative w-[150px] h-[150px] md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] rounded-full flex items-center justify-center bg-transparent shadow-[0_0_25px_rgba(212,175,55,0.6)] p-4 md:p-5 lg:p-6"
+        initial={{ opacity: 0, scale: 0.8, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}
+        transition={{ 
+          opacity: { duration: 1.2, ease: "easeOut", delay: 0.5 },
+          scale: { duration: 1.2, ease: "easeOut", delay: 0.5 },
+          y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }
+        }}
+        className="relative flex items-center justify-center bg-black rounded-full shadow-[0_0_35px_rgba(212,175,55,0.7)] z-20"
       >
-        <div className="relative w-full h-full drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-          <Image
-            src="/logo.jpg"
-            alt="MR Cell Point"
-            fill
-            className="object-contain"
-            priority
-            sizes="(max-width: 768px) 150px, (max-width: 1024px) 180px, 220px"
-            quality={100}
-          />
-        </div>
+        <Image
+          src="/logo.jpg"
+          alt="MR Cell Point"
+          width={250}
+          height={250}
+          className="w-[150px] h-[150px] md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] object-cover rounded-full"
+          priority
+          quality={100}
+        />
         
         {/* Shine Effect */}
         <motion.div
