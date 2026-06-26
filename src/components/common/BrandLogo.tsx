@@ -22,7 +22,7 @@ export function BrandLogo({
     md: "w-[48px] h-[48px]", // Header
     lg: "w-[70px] h-[70px]", // Invoice / PDF
     xl: "w-[100px] h-[100px]", // Login
-    splash: "w-[180px] h-[180px]", // Splash Screen
+    splash: "w-[160px] h-[160px] md:w-[170px] md:h-[170px] lg:w-[185px] lg:h-[185px]", // Splash Screen
   };
 
   const imageSizes = {
@@ -30,7 +30,7 @@ export function BrandLogo({
     md: 48,
     lg: 70,
     xl: 100,
-    splash: 180,
+    splash: 185,
   };
 
   const currentSize = imageSizes[size];
