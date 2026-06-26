@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "@/components/mobile-nav";
 import { SidebarNav } from "@/components/sidebar-nav";
-import { BrandLogo } from "@/components/ui/brand-logo";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       {/* Desktop Sidebar (Hidden on Mobile) */}
       <aside className="hidden md:flex w-64 border-r bg-card glass-card flex-col z-10">
         <div className="h-16 flex items-center px-6 border-b border-white/5">
-          <BrandLogo withText size="sidebar" />
+          <BrandLogo showText size="small" animated glow />
         </div>
         
         <SidebarNav />
@@ -48,7 +48,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <main className="flex-1 flex flex-col overflow-hidden relative z-0">
         <header className="h-16 border-b border-white/5 bg-card/50 backdrop-blur-xl flex items-center px-4 md:px-6 justify-between shrink-0">
           <div className="md:hidden">
-            <BrandLogo size="sm" withText />
+            <BrandLogo size="medium" showText animated glow />
           </div>
           <div className="hidden md:block">
             {/* Desktop header can be used for breadcrumbs or search */}

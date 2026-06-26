@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { BrandLogo } from "@/components/ui/brand-logo";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -45,7 +45,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md glass-card">
         <CardHeader className="space-y-2 text-center pb-8">
           <div className="flex justify-center mb-4">
-            <BrandLogo size="xl" />
+            <BrandLogo size="xl" glow animated />
           </div>
           <CardTitle className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
             M R Cell Point

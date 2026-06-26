@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BrandLogo } from "@/components/ui/brand-logo";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 export function LogoAnimation() {
   return (
@@ -31,7 +31,7 @@ export function LogoAnimation() {
         }}
         className="relative z-20"
       >
-        <BrandLogo size="splash" />
+        <BrandLogo size="splash" glow={false} />
         
         {/* Shine Effect */}
         <motion.div
