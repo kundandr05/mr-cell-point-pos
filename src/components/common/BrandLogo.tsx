@@ -4,7 +4,7 @@ import Image from "next/image";
 
 interface BrandLogoProps {
   className?: string;
-  size?: "small" | "medium" | "large" | "xl" | "splash";
+  size?: "sm" | "md" | "lg" | "xl" | "splash";
   showText?: boolean;
   animated?: boolean;
   glow?: boolean;
@@ -12,23 +12,23 @@ interface BrandLogoProps {
 
 export function BrandLogo({ 
   className, 
-  size = "small", 
+  size = "md", 
   showText = false,
   animated = false,
   glow = true
 }: BrandLogoProps) {
   const sizeClasses = {
-    small: "w-[46px] h-[46px]", // Sidebar
-    medium: "w-[48px] h-[48px]", // Header
-    large: "w-[70px] h-[70px]", // Invoice / PDF
+    sm: "w-[46px] h-[46px]", // Sidebar
+    md: "w-[48px] h-[48px]", // Header
+    lg: "w-[70px] h-[70px]", // Invoice / PDF
     xl: "w-[100px] h-[100px]", // Login
     splash: "w-[180px] h-[180px]", // Splash Screen
   };
 
   const imageSizes = {
-    small: 46,
-    medium: 48,
-    large: 70,
+    sm: 46,
+    md: 48,
+    lg: 70,
     xl: 100,
     splash: 180,
   };

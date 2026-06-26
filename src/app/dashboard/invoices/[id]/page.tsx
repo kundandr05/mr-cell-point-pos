@@ -62,7 +62,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         <div className="flex justify-between items-start border-b-2 border-[#D4A017]/50 pb-6 mb-6 pt-4">
           <div className="flex items-center gap-4">
             <div>
-              <BrandLogo size="large" glow={false} animated={false} />
+              <BrandLogo size="lg" glow={false} animated={false} />
             </div>
             <div>
               <h1 className="text-3xl font-black uppercase tracking-tight">{settings?.name || "M R Cell Point"}</h1>
