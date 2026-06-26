@@ -25,13 +25,13 @@ export function LogoAnimation() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, ease: "easeOut", delay: 0.5 }}
-        className="relative w-[180px] h-[180px] rounded-full overflow-hidden flex items-center justify-center bg-black/50 backdrop-blur-sm"
+        className="relative w-[180px] h-[180px] flex items-center justify-center bg-transparent drop-shadow-[0_0_15px_rgba(212,160,23,0.3)]"
       >
         <Image
           src="/logo.jpg"
           alt="MR Cell Point"
           fill
-          className="object-cover"
+          className="object-contain"
           priority
         />
         
