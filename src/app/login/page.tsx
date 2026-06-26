@@ -62,6 +62,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 placeholder="admin@example.com"
+                autoComplete="email"
                 {...register("email")}
               />
               {errors.email && (
@@ -82,6 +83,7 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   {...register("password")}
                   className="pr-10"
                 />
@@ -90,6 +92,8 @@ export default function LoginPage() {
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex={-1}
+                  title={showPassword ? "Hide password" : "Show password"}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
