@@ -53,8 +53,8 @@ export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
         await deleteInvoice(invoiceData.id);
         router.push("/dashboard/invoices");
         router.refresh();
-      } catch (e) {
-        alert("Failed to delete the invoice");
+      } catch (e: any) {
+        alert(e.message || "Failed to delete the invoice");
         setIsDeleting(false);
       }
     }
