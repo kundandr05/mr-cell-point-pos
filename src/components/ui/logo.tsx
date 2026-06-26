@@ -23,7 +23,7 @@ export function Logo({ className, size = "md", withText = false }: LogoProps) {
           sizeClasses[size]
         )}
       >
-        <img src="/logo.jpg" alt="MR Cell Point Logo" className="w-full h-full object-cover" />
+        <img src="/logo.png" alt="MR Cell Point Logo" className="w-full h-full object-cover" />
       </div>
       {withText && (
         <span className="font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/80">
