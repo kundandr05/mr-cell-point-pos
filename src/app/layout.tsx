@@ -18,7 +18,6 @@ import { Viewport } from "next";
 export const metadata: Metadata = {
   title: "M R Cell Point POS",
   description: "Mobile Shop Point of Sale and Billing System",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -27,11 +26,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#111111",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
