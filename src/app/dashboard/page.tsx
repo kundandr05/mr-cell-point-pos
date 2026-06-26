@@ -1,10 +1,15 @@
-import { TrendingUp, CreditCard, Wallet, PackageOpen, AlertCircle, BarChart3, Activity, ArrowRight, PackageX, ListMinus, History } from "lucide-react";
+import { TrendingUp, CreditCard, Wallet, PackageOpen, AlertCircle, BarChart3, ArrowRight, PackageX, ListMinus } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getDashboardMetrics } from "./actions";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const metrics = await getDashboardMetrics();
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-10">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-light tracking-tight text-foreground/90">Dashboard Overview</h2>
       </div>
@@ -19,9 +24,9 @@ export default function DashboardPage() {
           </div>
           <div className="relative z-10">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-2">Total Monthly Revenue</h3>
-            <p className="text-6xl font-light text-primary">₹0</p>
+            <p className="text-6xl font-light text-primary">₹{metrics.monthlyRevenue.toFixed(0)}</p>
             <div className="flex items-center gap-2 mt-4 text-sm font-medium">
-              <span className="text-success flex items-center gap-1"><TrendingUp className="h-4 w-4"/> +0%</span>
+              <span className="text-success flex items-center gap-1"><TrendingUp className="h-4 w-4"/> +{metrics.revenueGrowth}%</span>
               <span className="text-muted-foreground">vs last month</span>
             </div>
           </div>
@@ -36,39 +41,39 @@ export default function DashboardPage() {
         </div>
         
         {/* Today's Sales */}
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3">
+        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3 hover:border-success/30 transition-colors">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Today&apos;s Sales</h3>
             <div className="p-2 bg-success/10 rounded-full"><TrendingUp className="h-4 w-4 text-success" /></div>
           </div>
-          <p className="text-3xl font-light text-foreground">₹0</p>
+          <p className="text-3xl font-light text-foreground">₹{metrics.todaysSales.toFixed(0)}</p>
         </div>
         
         {/* Monthly Profit */}
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3">
+        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3 hover:border-primary/30 transition-colors">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Monthly Profit</h3>
             <div className="p-2 bg-primary/10 rounded-full"><Wallet className="h-4 w-4 text-primary" /></div>
           </div>
-          <p className="text-3xl font-light text-primary">₹0</p>
+          <p className="text-3xl font-light text-primary">₹{metrics.monthlyProfit.toFixed(0)}</p>
         </div>
         
         {/* Inventory Value */}
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3">
+        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3 hover:border-warning/30 transition-colors">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Inventory Value</h3>
             <div className="p-2 bg-warning/10 rounded-full"><PackageOpen className="h-4 w-4 text-warning" /></div>
           </div>
-          <p className="text-3xl font-light text-warning">₹0</p>
+          <p className="text-3xl font-light text-warning">₹{metrics.inventoryValue.toFixed(0)}</p>
         </div>
         
         {/* Pending Payments */}
-        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3">
+        <div className="glass-card p-6 rounded-2xl flex flex-col justify-center space-y-3 hover:border-destructive/30 transition-colors">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Pending Payments</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Pending/Split Bills</h3>
             <div className="p-2 bg-destructive/10 rounded-full"><AlertCircle className="h-4 w-4 text-destructive" /></div>
           </div>
-          <p className="text-3xl font-light text-destructive">₹0</p>
+          <p className="text-3xl font-light text-destructive">{metrics.pendingPaymentsCount}</p>
         </div>
 
         {/* Low Stock Alerts - Spans 2 Cols */}
@@ -81,43 +86,60 @@ export default function DashboardPage() {
               View All <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
-            <EmptyState 
-              icon={PackageX} 
-              title="Inventory is Healthy" 
-              description="No items are currently running low on stock." 
-            />
+          <div className="flex-1 flex flex-col justify-center border border-dashed border-white/10 rounded-xl bg-black/20 p-6">
+            {metrics.lowStockCount === 0 ? (
+              <EmptyState 
+                icon={PackageX} 
+                title="Inventory is Healthy" 
+                description="No items are currently running low on stock." 
+              />
+            ) : (
+              <div className="text-center">
+                <AlertCircle className="w-12 h-12 text-warning mx-auto mb-4 opacity-80" />
+                <p className="text-2xl font-bold text-warning">{metrics.lowStockCount} Products</p>
+                <p className="text-muted-foreground mt-2">are at or below their reorder levels.</p>
+              </div>
+            )}
           </div>
         </div>
         
-        {/* Top Selling Products */}
-        <div className="glass-card p-6 rounded-2xl min-h-[250px] flex flex-col">
+        {/* Top Selling Products - Spans 2 Cols */}
+        <div className="glass-card p-6 rounded-2xl md:col-span-2 min-h-[250px] flex flex-col">
           <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" /> Top Products
+            <TrendingUp className="h-5 w-5 text-primary" /> Top Products This Month
           </h3>
-          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
-            <EmptyState 
-              icon={ListMinus} 
-              title="No Sales Data" 
-              description="Generate a bill to start tracking your top products." 
-            />
+          <div className="flex-1 flex flex-col border border-dashed border-white/10 rounded-xl bg-black/20 overflow-hidden">
+            {metrics.topProducts.length === 0 ? (
+              <EmptyState 
+                icon={ListMinus} 
+                title="No Sales Yet" 
+                description="Make some sales to see your top products." 
+              />
+            ) : (
+              <div className="divide-y divide-white/5">
+                {metrics.topProducts.map((p, i) => (
+                  <div key={p.id} className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
+                        #{i + 1}
+                      </div>
+                      {p.image && <img src={p.image} className="w-10 h-10 rounded object-cover" alt="" />}
+                      <div>
+                        <p className="font-medium">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">{p.brand}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-foreground">{p.soldQty} Sold</p>
+                      <p className="text-xs text-primary">₹{p.revenue.toFixed(0)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-        
-        {/* Recent Activity */}
-        <div className="glass-card p-6 rounded-2xl min-h-[250px] flex flex-col">
-          <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
-            <Activity className="h-5 w-5 text-muted-foreground" /> Recent Activity
-          </h3>
-          <div className="flex-1 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-black/20">
-            <EmptyState 
-              icon={History} 
-              title="No Recent Activity" 
-              description="Your shop's recent activity will appear here." 
-            />
-          </div>
-        </div>
-        
+
       </div>
     </div>
   );

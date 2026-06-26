@@ -1,13 +1,19 @@
-export default function ReportsPage() {
+import { getReportsData } from "./actions";
+import { ReportsClient } from "./reports-client";
+
+export const dynamic = "force-dynamic";
+
+export default async function ReportsPage() {
+  const data = await getReportsData();
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10 h-full">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Reports</h2>
-        <p className="text-muted-foreground">View analytics and generated reports.</p>
+        <h2 className="text-3xl font-bold tracking-tight">Reports & Analytics</h2>
+        <p className="text-muted-foreground">View real-time analytics and generated reports based on live database data.</p>
       </div>
-      <div className="glass-card rounded-xl p-12 text-center">
-        <h3 className="text-xl font-medium text-muted-foreground">Reports module coming soon in Phase 6</h3>
-      </div>
+      
+      <ReportsClient data={data} />
     </div>
   );
 }

@@ -43,8 +43,6 @@ const QUICK_PRODUCTS = [
 
 export function BillingClient({ initialProducts = [] }: { initialProducts?: any[] }) {
   const router = useRouter();
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
   const [searchQuery, setSearchQuery] = useState("");
   
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -88,7 +86,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "F2") { e.preventDefault(); searchInputRef.current?.focus(); }
+      if (e.key === "F2") { e.preventDefault(); document.getElementById("product-search")?.focus(); }
       if (e.key === "F4") { e.preventDefault(); document.getElementById("customer-phone")?.focus(); }
       if (e.key === "F6") { e.preventDefault(); document.getElementById("payment-mode-trigger")?.focus(); }
       if (e.key === "F8") { e.preventDefault(); /* Print logic if on invoice page */ }
@@ -189,7 +187,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
       }
     });
     
-    searchInputRef.current?.focus();
+    document.getElementById("product-search")?.focus();
     toast.success(`Added ${product.name}`);
   };
 
@@ -280,7 +278,7 @@ export function BillingClient({ initialProducts = [] }: { initialProducts?: any[
             </h2>
             <div className="relative">
               <Input
-                ref={searchInputRef}
+                id="product-search"
                 placeholder="Scan barcode or type name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
