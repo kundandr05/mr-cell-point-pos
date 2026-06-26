@@ -17,11 +17,11 @@ export function SplashScreen() {
     // Check if splash has been seen in this session
     const hasSeenSplash = sessionStorage.getItem("mr_splash_seen");
     
-    if (hasSeenSplash === "true") {
-      // Immediately skip
-      router.replace("/login");
-      return;
-    }
+    // if (hasSeenSplash === "true") {
+    //   // Immediately skip
+    //   router.replace("/login");
+    //   return;
+    // }
 
     // Show splash
     setShowSplash(true);

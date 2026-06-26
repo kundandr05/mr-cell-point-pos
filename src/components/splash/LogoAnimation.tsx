@@ -28,7 +28,7 @@ export function LogoAnimation() {
         className="relative w-[180px] h-[180px] rounded-full overflow-hidden flex items-center justify-center bg-black/50 backdrop-blur-sm"
       >
         <Image
-          src="/logo.png"
+          src="/logo.jpg"
           alt="MR Cell Point"
           fill
           className="object-cover"
