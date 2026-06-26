@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { Logo } from "@/components/ui/logo";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -43,8 +44,8 @@ export default function LoginPage() {
     <div className="flex h-screen w-full items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1A1A1A] via-background to-background">
       <Card className="w-full max-w-md glass-card">
         <CardHeader className="space-y-2 text-center pb-8">
-          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 border border-primary/20">
-            <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-[#D4A017] to-[#F3E5AB]">M</span>
+          <div className="flex justify-center mb-4">
+            <Logo size="xl" />
           </div>
           <CardTitle className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">
             M R Cell Point
