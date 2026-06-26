@@ -61,11 +61,11 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Invoice Document - Styled for Paper/Thermal Print */}
-      <div id="invoice-print-area" className="bg-white text-black p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none max-w-[800px] mx-auto relative overflow-hidden font-sans">
+      <div id="invoice-print-area" className="bg-white text-black p-4 md:p-10 rounded-2xl shadow-[0_0_50px_rgba(212,160,23,0.1)] print:shadow-none print:p-0 print:m-0 print:w-full print:max-w-none print:rounded-none max-w-[800px] mx-auto relative overflow-hidden font-sans">
         
         {/* Header Section */}
-        <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-4 pt-2">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row print:flex-row justify-between items-start border-b-2 border-black pb-4 mb-4 pt-2 gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <div>
               <BrandLogo size="lg" glow={false} animated={false} />
             </div>
@@ -76,23 +76,23 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
               <p className="text-xs font-medium">Ph: {settings?.phoneNumber} | Email: {settings?.email}</p>
             </div>
           </div>
-          <div className="text-right flex flex-col items-end">
-            <h2 className="text-2xl font-black uppercase tracking-widest bg-black text-white px-3 py-1 inline-block">Tax Invoice</h2>
-            <p className="text-sm font-bold mt-2">GSTIN: {settings?.gstin}</p>
-            <div className="mt-2 opacity-80">
+          <div className="text-left md:text-right print:text-right flex flex-col items-start md:items-end print:items-end w-full md:w-auto">
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-widest bg-black text-white px-3 py-1 inline-block">Tax Invoice</h2>
+            <p className="text-xs md:text-sm font-bold mt-2">GSTIN: {settings?.gstin}</p>
+            <div className="mt-2 opacity-80 self-start md:self-end print:self-end">
               <Barcode value={invoice.invoiceNumber} />
             </div>
           </div>
         </div>
 
         {/* Info Section */}
-        <div className="grid grid-cols-2 gap-8 mb-6 text-sm border-b-2 border-black pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 md:gap-8 mb-6 text-sm border-b-2 border-black pb-4">
           <div className="space-y-1">
             <p className="text-black/60 font-bold uppercase text-[10px] tracking-wider mb-1">Billed To</p>
             <p className="font-extrabold text-base uppercase">{invoice.customerName || "Cash Customer"}</p>
             {invoice.customerPhone && <p className="font-medium">Ph: {invoice.customerPhone}</p>}
           </div>
-          <div className="space-y-1 text-right">
+          <div className="space-y-1 text-left md:text-right print:text-right">
             <p className="text-black/60 font-bold uppercase text-[10px] tracking-wider mb-1">Invoice Details</p>
             <p><span className="font-bold">Invoice No:</span> {invoice.invoiceNumber}</p>
             <p><span className="font-bold">Date:</span> {format(new Date(invoice.date), "dd MMM yyyy")}</p>
@@ -102,7 +102,8 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         </div>
 
         {/* Item Table */}
-        <table className="w-full text-left mb-6 border-collapse text-xs">
+        <div className="w-full overflow-x-auto mb-6">
+          <table className="w-full text-left border-collapse text-xs min-w-[600px]">
           <thead>
             <tr className="border-y border-black bg-black/5 uppercase">
               <th className="py-2 px-1 font-bold w-[5%]">Sl</th>
@@ -139,9 +140,10 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
             })}
           </tbody>
         </table>
+        </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-2 gap-8 border-t-2 border-black pt-4 mb-8">
+        <div className="flex flex-col-reverse md:grid md:grid-cols-2 print:grid print:grid-cols-2 gap-8 border-t-2 border-black pt-4 mb-8">
           
           {/* QR Code and Words */}
           <div className="flex flex-col justify-between">
