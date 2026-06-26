@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
+import { DeleteInvoiceButton } from "./delete-invoice-button";
 
 export function InvoiceList({ initialInvoices }: { initialInvoices: any[] }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,11 +86,14 @@ export function InvoiceList({ initialInvoices }: { initialInvoices: any[] }) {
                       ₹{inv.grandTotal.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <Link href={"/dashboard/invoices/" + inv.id}>
-                        <Button variant="ghost" size="sm" className="hover:bg-primary/20 hover:text-primary transition-colors">
-                          <Eye className="w-4 h-4 mr-2" /> View Bill
-                        </Button>
-                      </Link>
+                      <div className="flex items-center justify-center gap-2">
+                        <Link href={"/dashboard/invoices/" + inv.id}>
+                          <Button variant="ghost" size="sm" className="hover:bg-primary/20 hover:text-primary transition-colors">
+                            <Eye className="w-4 h-4 mr-2" /> View
+                          </Button>
+                        </Link>
+                        <DeleteInvoiceButton invoiceId={inv.id} />
+                      </div>
                     </td>
                   </tr>
                 ))}
