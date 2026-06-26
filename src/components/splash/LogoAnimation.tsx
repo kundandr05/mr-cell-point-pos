@@ -32,11 +32,11 @@ export function LogoAnimation() {
         className="relative flex items-center justify-center bg-black rounded-full shadow-[0_0_35px_rgba(212,175,55,0.7)] z-20"
       >
         <Image
-          src="/logo.jpg"
+          src="/logo.png"
           alt="MR Cell Point"
-          width={250}
-          height={250}
-          className="w-[150px] h-[150px] md:w-[180px] md:h-[180px] lg:w-[220px] lg:h-[220px] object-cover rounded-full"
+          width={190}
+          height={190}
+          className="w-[170px] h-[170px] md:w-[190px] md:h-[190px] object-cover rounded-full"
           priority
           quality={100}
         />
