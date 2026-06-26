@@ -18,7 +18,7 @@ export function BrandLogo({
   glow = true
 }: BrandLogoProps) {
   const sizeClasses = {
-    small: "w-[44px] h-[44px]", // Sidebar
+    small: "w-[46px] h-[46px]", // Sidebar
     medium: "w-[48px] h-[48px]", // Header
     large: "w-[70px] h-[70px]", // Invoice / PDF
     xl: "w-[100px] h-[100px]", // Login
@@ -26,7 +26,7 @@ export function BrandLogo({
   };
 
   const imageSizes = {
-    small: 44,
+    small: 46,
     medium: 48,
     large: 70,
     xl: 100,
@@ -46,7 +46,7 @@ export function BrandLogo({
         )}
       >
         <Image 
-          src="/logo.jpg" 
+          src="/logo.png" 
           alt="MR Cell Point Logo" 
           width={currentSize}
           height={currentSize}
