@@ -31,7 +31,7 @@ export async function deleteInvoice(invoiceId: string) {
     include: { items: true }
   });
 
-  if (!invoice) throw new Error("Invoice not found");
+  if (!invoice) return { success: false, error: "Invoice not found" };
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -71,7 +71,7 @@ export async function deleteInvoice(invoiceId: string) {
       });
     });
   } catch (error: any) {
-    throw new Error(error.message || "Failed to delete from database");
+    return { success: false, error: error.message || "Failed to delete from database" };
   }
 
   revalidatePath("/dashboard/invoices");

@@ -19,8 +19,12 @@ export function DeleteInvoiceButton({ invoiceId }: { invoiceId: string }) {
     if (confirmDelete) {
       try {
         setIsDeleting(true);
-        await deleteInvoice(invoiceId);
-        router.refresh();
+        const res = await deleteInvoice(invoiceId);
+        if (!res.success) {
+          alert(res.error || "Failed to delete the invoice");
+        } else {
+          router.refresh();
+        }
       } catch (e: any) {
         alert(e.message || "Failed to delete the invoice");
       } finally {

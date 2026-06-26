@@ -50,9 +50,14 @@ export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
     if (confirmDelete) {
       try {
         setIsDeleting(true);
-        await deleteInvoice(invoiceData.id);
-        router.push("/dashboard/invoices");
-        router.refresh();
+        const res = await deleteInvoice(invoiceData.id);
+        if (!res.success) {
+          alert(res.error || "Failed to delete the invoice");
+          setIsDeleting(false);
+        } else {
+          router.push("/dashboard/invoices");
+          router.refresh();
+        }
       } catch (e: any) {
         alert(e.message || "Failed to delete the invoice");
         setIsDeleting(false);
