@@ -51,6 +51,7 @@ export default async function InvoicePrintPage({ params }: { params: Promise<{ i
         </Link>
         <InvoiceActions 
           invoiceData={{
+            id: invoice.id,
             invoiceNumber: invoice.invoiceNumber,
             customerPhone: invoice.customerPhone,
             customerName: invoice.customerName,

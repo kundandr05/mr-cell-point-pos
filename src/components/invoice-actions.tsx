@@ -1,10 +1,14 @@
 "use client";
 
-import { Printer, MessageCircle } from "lucide-react";
+import { Printer, MessageCircle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { deleteInvoice } from "@/app/dashboard/invoices/actions";
 
 interface InvoiceActionsProps {
   invoiceData: {
+    id: string;
     invoiceNumber: string;
     customerPhone: string | null;
     customerName: string | null;
@@ -14,6 +18,8 @@ interface InvoiceActionsProps {
 }
 
 export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const handleWhatsAppShare = () => {
     if (!invoiceData.customerPhone) {
@@ -35,23 +41,43 @@ export function InvoiceActions({ invoiceData }: InvoiceActionsProps) {
     window.open(whatsappUrl, '_blank');
   };
 
-  /* 
-   * PDF Download functionality has been temporarily disabled.
-   * It will be re-introduced in a future phase using a more reliable implementation.
-   * Users should use the browser's native Print dialog ("Save as PDF") instead.
-   */
+  const handleDelete = async () => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this invoice? \n\n" +
+      "This action cannot be undone. The items from this invoice will be automatically returned to your inventory stock."
+    );
+    
+    if (confirmDelete) {
+      try {
+        setIsDeleting(true);
+        await deleteInvoice(invoiceData.id);
+        router.push("/dashboard/invoices");
+        router.refresh();
+      } catch (e) {
+        alert("Failed to delete the invoice");
+        setIsDeleting(false);
+      }
+    }
+  };
 
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Button 
+        onClick={handleDelete}
+        variant="outline"
+        disabled={isDeleting}
+        className="border-red-600/30 text-red-500 hover:bg-red-600/10 hover:text-red-400 px-4 py-2 rounded-xl transition-all flex items-center gap-2"
+      >
+        <Trash2 className="h-5 w-5" /> {isDeleting ? "Deleting..." : "Delete Bill"}
+      </Button>
+
+      <Button 
         onClick={handleWhatsAppShare}
         variant="outline"
-        className="border-green-600/30 text-green-500 hover:bg-green-600/10 px-4 py-2 rounded-xl transition-all flex items-center gap-2"
+        className="border-green-600/30 text-green-500 hover:bg-green-600/10 hover:text-green-400 px-4 py-2 rounded-xl transition-all flex items-center gap-2"
       >
         <MessageCircle className="h-5 w-5" /> Share
       </Button>
-      
-      {/* PDF Button removed */}
 
       <Button 
         onClick={() => window.print()}
